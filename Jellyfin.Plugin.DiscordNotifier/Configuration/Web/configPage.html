@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Discord Notifier</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+    <div id="DiscordNotifierConfigPage"
+         data-role="page"
+         class="page type-interior pluginConfigurationPage"
+         data-require="emby-input,emby-button,emby-select,emby-checkbox"
+         data-controller="__plugin/DiscordNotifierConfig">
+        <div data-role="content">
+            <div class="content-primary">
+                <form id="DiscordNotifierConfigForm">
+                    <div class="checkboxContainer checkboxContainer-withDescription">
+                        <label class="emby-checkbox-label">
+                            <input id="EnablePlugin" name="EnablePluginCheckBox" type="checkbox" is="emby-checkbox" />
+                            <span>Enable Plugin</span>
+                        </label>
+                    </div>
+
+                    <div class="sectionTitleContainer flex align-items-center">
+                        <h2>Discord Configuration</h2>
+                    </div>
+
+                    <div class="inputContainer">
+                        <label class="inputLabel inputLabelUnfocused" for="webhookUrl">Discord Webhook URL</label>
+                        <input id="webhookUrl" name="webhookUrl" type="text" is="emby-input" />
+                        <div class="fieldDescription">Insert your Discord webhook URL here. You can create one in your Discord server settings under Integrations.</div>
+                    </div>
+
+                    <div>
+                        <button id="testButton" is="emby-button" class="raised button block emby-button">
+                            <span>Test webhook</span>
+                        </button>
+                    </div>
+
+                    <div class="sectionTitleContainer flex align-items-center">
+                        <h2>Notifier Settings</h2>
+                    </div>               
+
+                    <div class="checkboxContainer checkboxContainer-withDescription">
+                        <label class="emby-checkbox-label">
+                            <input id="UserCreatedNotifier" name="UserCreatedNotifierCheckBox" type="checkbox" is="emby-checkbox" />
+                            <span>User Created Notifier</span>
+                        </label>
+                    </div>
+
+                    <div class="checkboxContainer checkboxContainer-withDescription">
+                        <label class="emby-checkbox-label">
+                            <input id="UserDeletedNotifier" name="UserDeletedNotifierCheckBox" type="checkbox" is="emby-checkbox" />
+                            <span>User Deleted Notifier</span>
+                        </label>
+                    </div>
+
+                    <div>
+                        <button id="saveButton" is="emby-button" type="submit" class="raised block emby-button">
+                            <span>Save</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!--<script type="text/javascript" src="Discord Notifier.js"></script>-->
+</body>
+</html>
