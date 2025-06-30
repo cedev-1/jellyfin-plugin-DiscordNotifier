@@ -13,5 +13,5 @@ This plugin allows you to send notifications to your Discord server when events 
 1. You have to open the dashboard of your Jellyfin server. Go to Catalog, click on ⚙️ button.
 2. Click to + to add the URL.
 ```bash
-https://raw.githubusercontent.com/danielveigasilva/Jellyfin-Plugin-DiscordNotifier/master/manifest.json
+https://raw.githubusercontent.com/cedev-1/Jellyfin-Plugin-DiscordNotifier/master/manifest.json
 ```
