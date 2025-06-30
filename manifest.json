@@ -1,0 +1,21 @@
+[
+    {
+        "category": "Notifications",
+        "guid": "8f3c85d3-19cf-4e50-a57e-7d2ce3c0c413",
+        "name": "Discord Notifier",
+        "owner": "cedev-1",
+        "overview": "Easily send notifications to your Discord server!",
+        "description": "Configure notifications to send to your Discord server when events occur.",
+        "imageUrl": "https://raw.githubusercontent.com/cedev-1/Jellyfin-Plugin-DiscordNotifier/master/media/banner.png",
+        "versions": [
+            {
+                "checksum": "EB850654291B41025EA2F7F5359117FB",
+                "version": "1.0.0.0",
+                "targetAbi": "10.9.0.0",
+                "sourceUrl": "https://github.com/cedev-1/Jellyfin-Plugin-DiscordNotifier/releases/download/v1.0.0.0/Jellyfin.Plugin.DiscordNotifier-v1.0.0.0.zip",
+                "timestamp": "2025-06-30T00:00:00Z",
+                "changelog": "- Initial release"
+            }
+        ]
+    }
+]
