@@ -25,9 +25,7 @@ namespace Jellyfin.Plugin.DiscordNotifier.Templates
 
                 string serverUrl = !string.IsNullOrWhiteSpace(config.ServerUrl)
                     ? config.ServerUrl.Trim().TrimEnd('/')
-                    : "http://10.0.20.24:8096"; // default value for server URL
-                    // I have a problem with that, it uses the value by default all the time.
-
+                    : "http://10.0.20.24:8096"; // default value for server URL - I have a problem with that, it uses the value by default all the time.
 
                 var message = new
                 {
@@ -49,7 +47,8 @@ namespace Jellyfin.Plugin.DiscordNotifier.Templates
                             {
                                 text = "Jellyfin Discord Notifier",
                                 icon_url = "https://static-00.iconduck.com/assets.00/jellyfin-icon-256x255-u0iypdp6.png"
-                            }
+                            },
+                            timestamp = DateTime.UtcNow.ToString("o")
                         }
                     }
                 };

@@ -37,6 +37,7 @@ namespace Jellyfin.Plugin.DiscordNotifier.Templates
                         {
                             title = "🪼 User Deleted",
                             description = "An account has been removed from the server.",
+                            url = $"{serverUrl}/web/#/dashboard/users",
                             color = 15158332,
                             fields = new[]
                             {
@@ -47,7 +48,8 @@ namespace Jellyfin.Plugin.DiscordNotifier.Templates
                             {
                                 text = "Jellyfin Discord Notifier",
                                 icon_url = "https://static-00.iconduck.com/assets.00/jellyfin-icon-256x255-u0iypdp6.png"
-                            }
+                            },
+                            timestamp = DateTime.UtcNow.ToString("o")
                         }
                     }
                 };
