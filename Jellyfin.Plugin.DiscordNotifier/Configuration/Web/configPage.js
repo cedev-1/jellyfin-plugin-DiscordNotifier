@@ -14,6 +14,8 @@ export default function (view) {
             document.querySelector('#webhookUrl').value = config.WebhookUrl || '';
             document.querySelector('#UserCreatedNotifier').checked = config.UserCreatedNotifier || false;
             document.querySelector('#UserDeletedNotifier').checked = config.UserDeletedNotifier || false;
+            document.querySelector('#AuthenticationSuccessNotifier').checked = config.AuthenticationSuccessNotifier || false;
+            document.querySelector('#AuthenticationFailureNotifier').checked = config.AuthenticationFailureNotifier || false;
             
         } catch (error) {
             console.error('Error loading config:', error);
@@ -36,6 +38,8 @@ export default function (view) {
             config.WebhookUrl = document.querySelector('#webhookUrl').value.trim();
             config.UserCreatedNotifier = document.querySelector('#UserCreatedNotifier').checked;
             config.UserDeletedNotifier = document.querySelector('#UserDeletedNotifier').checked;
+            config.AuthenticationSuccessNotifier = document.querySelector('#AuthenticationSuccessNotifier').checked;
+            config.AuthenticationFailureNotifier = document.querySelector('#AuthenticationFailureNotifier').checked;
 
             console.log('Saving config:', config);
             

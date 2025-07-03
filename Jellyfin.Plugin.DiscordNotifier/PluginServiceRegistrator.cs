@@ -2,6 +2,7 @@ using Jellyfin.Data.Events.Users;
 using MediaBrowser.Controller;
 using MediaBrowser.Controller.Events;
 using MediaBrowser.Controller.Plugins;
+using MediaBrowser.Controller.Events.Authentication;
 using Microsoft.Extensions.DependencyInjection;
 using Jellyfin.Plugin.DiscordNotifier.Notifiers;
 using Jellyfin.Plugin.DiscordNotifier.Configuration;
@@ -31,7 +32,10 @@ public class PluginServiceRegistrator : IPluginServiceRegistrator
 
         // User consumers.
         serviceCollection.AddSingleton<IEventConsumer<UserCreatedEventArgs>, UserCreatedNotifier>();
-
         serviceCollection.AddScoped<IEventConsumer<UserDeletedEventArgs>, UserDeletedNotifier>();
+
+        // Security consumers.
+        serviceCollection.AddScoped<IEventConsumer<AuthenticationResultEventArgs>, AuthenticationSuccessNotifier>();
+        serviceCollection.AddScoped<IEventConsumer<AuthenticationRequestEventArgs>, AuthenticationFailureNotifier>();
     }
 }

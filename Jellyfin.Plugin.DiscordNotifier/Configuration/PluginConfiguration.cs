@@ -18,6 +18,8 @@ namespace Jellyfin.Plugin.DiscordNotifier.Configuration
             ServerUrl = string.Empty;
             UserCreatedNotifier = true;
             UserDeletedNotifier = true;
+            AuthenticationSuccessNotifier = true;
+            AuthenticationFailureNotifier = true;
         }
 
         /// <summary>
@@ -44,5 +46,15 @@ namespace Jellyfin.Plugin.DiscordNotifier.Configuration
         /// Gets or sets a value indicating whether the UserDeletedNotifier is enabled.
         /// </summary>
         public bool UserDeletedNotifier { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the AuthenticationSuccessNotifier is enabled.
+        /// </summary>
+        public bool AuthenticationSuccessNotifier { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the AuthenticationFailureNotifier is enabled.
+        /// </summary>
+        public bool AuthenticationFailureNotifier { get; set; }
     }
 }
