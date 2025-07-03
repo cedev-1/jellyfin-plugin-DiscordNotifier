@@ -41,13 +41,14 @@ namespace Jellyfin.Plugin.DiscordNotifier.Controllers
                     new
                     {
                         title = "🪼 Test Notification",
-                        description = $"This is a test message from Jellyfin Discord Notifier.",
+                        description = $"This is a test message from **Jellyfin Discord Notifier**.",
                         color = 0xaa5cc3,
                         footer = new
                         {
                             text = "Jellyfin Discord Notifier",
                             icon_url = "https://static-00.iconduck.com/assets.00/jellyfin-icon-256x255-u0iypdp6.png"
-                        }
+                        },
+                        timestamp = DateTime.UtcNow.ToString("o")
                     }
                 }
             };
