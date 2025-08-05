@@ -6,7 +6,7 @@
         "owner": "cedev-1",
         "overview": "Easily send notifications to your Discord server!",
         "description": "Configure notifications to send to your Discord server when events occur.",
-        "imageUrl": "https://raw.githubusercontent.com/cedev-1/Jellyfin-Plugin-DiscordNotifier/master/media/banner.png",
+        "imageUrl": "https://raw.githubusercontent.com/cedev-1/Jellyfin-Plugin-DiscordNotifier/main/media/banner.png",
         "versions": [
             {
                 "checksum": "E14ED0100239285A169FFD3EF0AEBA28",
