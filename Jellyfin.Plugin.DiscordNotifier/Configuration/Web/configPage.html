@@ -31,6 +31,12 @@
                         <div class="fieldDescription">Insert your Discord webhook URL here. You can create one in your Discord server settings under Integrations.</div>
                     </div>
 
+                    <div class="inputContainer">
+                        <label class="inputLabel inputLabelUnfocused" for="serverUrl">Jellyfin Server URL</label>
+                        <input id="serverUrl" name="serverUrl" type="text" is="emby-input" placeholder="http://your-server:8096" />
+                        <div class="fieldDescription">Enter your Jellyfin server URL (e.g., http://localhost:8096 or https://jellyfin.yourdomain.com).</div>
+                    </div>
+
                     <div>
                         <button id="testButton" is="emby-button" class="raised button block emby-button">
                             <span>Test webhook</span>

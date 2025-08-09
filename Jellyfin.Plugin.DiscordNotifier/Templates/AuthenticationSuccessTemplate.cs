@@ -1,6 +1,7 @@
 using MediaBrowser.Controller.Events.Authentication;
 using Microsoft.Extensions.Logging;
 using Jellyfin.Plugin.DiscordNotifier.Configuration;
+using Jellyfin.Plugin.DiscordNotifier.Utils;
 
 namespace Jellyfin.Plugin.DiscordNotifier.Templates;
 
@@ -24,9 +25,7 @@ public static class AuthenticationSuccessTemplate
 
         _logger.LogInformation("Creating Discord message for successful login: {Username}", user.Name);
 
-        string serverUrl = string.IsNullOrWhiteSpace(config.ServerUrl)
-            ? "http://10.0.20.24:8096"
-            : config.ServerUrl.Trim().TrimEnd('/');
+        string serverUrl = ServerUrlHelper.GetServerUrl(config);
 
         return new
         {

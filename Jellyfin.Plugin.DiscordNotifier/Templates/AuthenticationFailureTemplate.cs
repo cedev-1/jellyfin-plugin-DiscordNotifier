@@ -1,6 +1,7 @@
 using MediaBrowser.Controller.Events.Authentication;
 using Jellyfin.Plugin.DiscordNotifier.Configuration;
 using Microsoft.Extensions.Logging;
+using Jellyfin.Plugin.DiscordNotifier.Utils;
 
 namespace Jellyfin.Plugin.DiscordNotifier.Templates;
 
@@ -19,9 +20,7 @@ public static class AuthenticationFailureTemplate
     /// <returns>An anonymous object representing the Discord webhook message.</returns>
     public static object CreateMessage(AuthenticationRequestEventArgs eventArgs, PluginConfiguration config)
     {
-        string serverUrl = string.IsNullOrWhiteSpace(config.ServerUrl)
-            ? "http://10.0.20.24:8096"
-            : config.ServerUrl.Trim().TrimEnd('/');
+        string serverUrl = ServerUrlHelper.GetServerUrl(config);
 
         return new
         {

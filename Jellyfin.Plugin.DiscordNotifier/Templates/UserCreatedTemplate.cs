@@ -1,6 +1,7 @@
 using Jellyfin.Data.Events.Users;
 using Microsoft.Extensions.Logging;
 using Jellyfin.Plugin.DiscordNotifier.Configuration;
+using Jellyfin.Plugin.DiscordNotifier.Utils;
 
 namespace Jellyfin.Plugin.DiscordNotifier.Templates
 {
@@ -23,9 +24,7 @@ namespace Jellyfin.Plugin.DiscordNotifier.Templates
             {
                 _logger.LogInformation("Creating Discord message for new user: {Username}", eventArgs.Argument.Username);
 
-                string serverUrl = !string.IsNullOrWhiteSpace(config.ServerUrl)
-                    ? config.ServerUrl.Trim().TrimEnd('/')
-                    : "http://10.0.20.24:8096"; // default value for server URL - I have a problem with that, it uses the value by default all the time.
+                string serverUrl = ServerUrlHelper.GetServerUrl(config);
 
                 var message = new
                 {

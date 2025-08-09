@@ -12,6 +12,7 @@ export default function (view) {
             
             document.querySelector('#EnablePlugin').checked = config.EnablePlugin || false;
             document.querySelector('#webhookUrl').value = config.WebhookUrl || '';
+            document.querySelector('#serverUrl').value = config.ServerUrl || '';
             document.querySelector('#UserCreatedNotifier').checked = config.UserCreatedNotifier || false;
             document.querySelector('#UserDeletedNotifier').checked = config.UserDeletedNotifier || false;
             document.querySelector('#AuthenticationSuccessNotifier').checked = config.AuthenticationSuccessNotifier || false;
@@ -36,6 +37,7 @@ export default function (view) {
             
             config.EnablePlugin = document.querySelector('#EnablePlugin').checked;
             config.WebhookUrl = document.querySelector('#webhookUrl').value.trim();
+            config.ServerUrl = document.querySelector('#serverUrl').value.trim();
             config.UserCreatedNotifier = document.querySelector('#UserCreatedNotifier').checked;
             config.UserDeletedNotifier = document.querySelector('#UserDeletedNotifier').checked;
             config.AuthenticationSuccessNotifier = document.querySelector('#AuthenticationSuccessNotifier').checked;
