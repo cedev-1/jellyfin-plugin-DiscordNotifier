@@ -9,6 +9,14 @@
         "imageUrl": "https://raw.githubusercontent.com/cedev-1/Jellyfin-Plugin-DiscordNotifier/main/media/banner.png",
         "versions": [
             {
+                "checksum": "ca40915021365464331d6b85ff1056d2",
+                "version": "1.5.0.0",
+                "targetAbi": "10.9.0.0",
+                "sourceUrl": "https://github.com/cedev-1/Jellyfin-Plugin-DiscordNotifier/releases/download/v1.5.0.0/Jellyfin.Plugin.DiscordNotifier-v1.5.0.0.zip",
+                "timestamp": "2025-08-09T00:00:00Z",
+                "changelog": "- Add configurable Jellyfin server URL setting - Remove hardcoded server URL - Improved URL handling with helper utility"
+            },
+            {
                 "checksum": "E14ED0100239285A169FFD3EF0AEBA28",
                 "version": "1.0.0.5",
                 "targetAbi": "10.9.0.0",
