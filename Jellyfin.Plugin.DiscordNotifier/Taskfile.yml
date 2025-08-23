@@ -1,0 +1,30 @@
+version: '3'
+
+# You can adapt these variables if needed (only for development).
+vars:
+  PLUGIN_NAME: Jellyfin.Plugin.DiscordNotifier
+  TARGET_FRAMEWORK: net8.0
+  BUILD_CONFIGURATION: Debug
+  PROJECT_DIR: .
+  BUILD_DIR: '{{.PROJECT_DIR}}/bin/{{.BUILD_CONFIGURATION}}/{{.TARGET_FRAMEWORK}}'
+  DLL_PATH: '{{.BUILD_DIR}}/{{.PLUGIN_NAME}}.dll'
+  CONFIG_DIR: /home/cedev/Desktop/config-jellyfin/data/plugins/configurations/DiscordNotifier
+  PLUGIN_DIR: /home/cedev/Desktop/config-jellyfin/data/plugins/configurations
+  DOCKER_CONTAINER: jellyfin
+
+tasks:
+
+  build:
+    desc: Build du plugin en Debug
+    cmds:
+      - dotnet build {{.PROJECT_DIR}} -c {{.BUILD_CONFIGURATION}}
+      - if [ ! -d "{{.CONFIG_DIR}}" ]; then sudo mkdir -p "{{.CONFIG_DIR}}"; fi
+      - sudo mv -f "{{.DLL_PATH}}" "{{.CONFIG_DIR}}/"
+      - docker restart "{{.DOCKER_CONTAINER}}"
+
+  clean:
+    desc: Delete bin/ + obj/ + dll + xml on jellyfin
+    cmds:
+      - rm -rf "{{.PROJECT_DIR}}/bin" "{{.PROJECT_DIR}}/obj"
+      - if [ -f "{{.CONFIG_DIR}}/{{.PLUGIN_NAME}}.dll" ]; then sudo rm -f "{{.CONFIG_DIR}}/{{.PLUGIN_NAME}}.dll"; fi
+      - if [ -f "{{.PLUGIN_DIR}}/{{.PLUGIN_NAME}}.xml" ]; then sudo rm "{{.PLUGIN_DIR}}/{{.PLUGIN_NAME}}.xml"; fi
