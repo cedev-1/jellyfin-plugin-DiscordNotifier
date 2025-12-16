@@ -1,37 +1,45 @@
 [
-    {
-        "category": "Notifications",
-        "guid": "8f3c85d3-19cf-4e50-a57e-7d2ce3c0c413",
-        "name": "Discord Notifier",
-        "owner": "cedev-1",
-        "overview": "Easily send notifications to your Discord server!",
-        "description": "Configure notifications to send to your Discord server when events occur.",
-        "imageUrl": "https://raw.githubusercontent.com/cedev-1/Jellyfin-Plugin-DiscordNotifier/main/media/banner.png",
-        "versions": [
-            {
-                "checksum": "ca40915021365464331d6b85ff1056d2",
-                "version": "1.5.0.0",
-                "targetAbi": "10.9.0.0",
-                "sourceUrl": "https://github.com/cedev-1/Jellyfin-Plugin-DiscordNotifier/releases/download/v1.5.0.0/Jellyfin.Plugin.DiscordNotifier-v1.5.0.0.zip",
-                "timestamp": "2025-08-09T00:00:00Z",
-                "changelog": "- Add configurable Jellyfin server URL setting - Remove hardcoded server URL - Improved URL handling with helper utility"
-            },
-            {
-                "checksum": "E14ED0100239285A169FFD3EF0AEBA28",
-                "version": "1.0.0.5",
-                "targetAbi": "10.9.0.0",
-                "sourceUrl": "https://github.com/cedev-1/Jellyfin-Plugin-DiscordNotifier/releases/download/v1.0.0.5/Jellyfin.Plugin.DiscordNotifier-v1.0.0.5.zip",
-                "timestamp": "2025-07-03T00:00:00Z",
-                "changelog": "- Add Auth notifications - Fix bug"
-            },
-            {
-                "checksum": "EB850654291B41025EA2F7F5359117FB",
-                "version": "1.0.0.0",
-                "targetAbi": "10.9.0.0",
-                "sourceUrl": "https://github.com/cedev-1/Jellyfin-Plugin-DiscordNotifier/releases/download/v1.0.0.0/Jellyfin.Plugin.DiscordNotifier-v1.0.0.0.zip",
-                "timestamp": "2025-06-30T00:00:00Z",
-                "changelog": "- Initial release"
-            }
-        ]
-    }
+  {
+    "category": "Notifications",
+    "guid": "8f3c85d3-19cf-4e50-a57e-7d2ce3c0c413",
+    "name": "Discord Notifier",
+    "owner": "cedev-1",
+    "overview": "Easily send notifications to your Discord server!",
+    "description": "Configure notifications to send to your Discord server when events occur.",
+    "imageUrl": "https://raw.githubusercontent.com/cedev-1/Jellyfin-Plugin-DiscordNotifier/main/media/banner.png",
+    "versions": [
+      {
+        "checksum": "6b1f375bb36db2b6d218454559978ab3",
+        "version": "1.6.0.0",
+        "targetAbi": "10.10.0.0",
+        "sourceUrl": "https://github.com/cedev-1/jellyfin-plugin-DiscordNotifier/releases/download/v1.6.0.0/Jellyfin.Plugin.DiscordNotifier-v1.6.0.0.zip",
+        "timestamp": "2025-12-16T22:09:56Z",
+        "changelog": "- New release v1.6.0.0"
+      },
+      {
+        "checksum": "ca40915021365464331d6b85ff1056d2",
+        "version": "1.5.0.0",
+        "targetAbi": "10.9.0.0",
+        "sourceUrl": "https://github.com/cedev-1/Jellyfin-Plugin-DiscordNotifier/releases/download/v1.5.0.0/Jellyfin.Plugin.DiscordNotifier-v1.5.0.0.zip",
+        "timestamp": "2025-08-09T00:00:00Z",
+        "changelog": "- Add configurable Jellyfin server URL setting - Remove hardcoded server URL - Improved URL handling with helper utility"
+      },
+      {
+        "checksum": "E14ED0100239285A169FFD3EF0AEBA28",
+        "version": "1.0.0.5",
+        "targetAbi": "10.9.0.0",
+        "sourceUrl": "https://github.com/cedev-1/Jellyfin-Plugin-DiscordNotifier/releases/download/v1.0.0.5/Jellyfin.Plugin.DiscordNotifier-v1.0.0.5.zip",
+        "timestamp": "2025-07-03T00:00:00Z",
+        "changelog": "- Add Auth notifications - Fix bug"
+      },
+      {
+        "checksum": "EB850654291B41025EA2F7F5359117FB",
+        "version": "1.0.0.0",
+        "targetAbi": "10.9.0.0",
+        "sourceUrl": "https://github.com/cedev-1/Jellyfin-Plugin-DiscordNotifier/releases/download/v1.0.0.0/Jellyfin.Plugin.DiscordNotifier-v1.0.0.0.zip",
+        "timestamp": "2025-06-30T00:00:00Z",
+        "changelog": "- Initial release"
+      }
+    ]
+  }
 ]
