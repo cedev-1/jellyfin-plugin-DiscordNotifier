@@ -1,4 +1,4 @@
-/bin
-/obj
+Jellyfin.Plugin.DiscordNotifier/bin
+Jellyfin.Plugin.DiscordNotifier/obj
 
 .direnv

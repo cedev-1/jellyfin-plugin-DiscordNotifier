@@ -1,30 +1,41 @@
 version: '3'
 
-# You can adapt these variables if needed (only for development).
 vars:
   PLUGIN_NAME: Jellyfin.Plugin.DiscordNotifier
-  TARGET_FRAMEWORK: net8.0
-  BUILD_CONFIGURATION: Debug
-  PROJECT_DIR: .
-  BUILD_DIR: '{{.PROJECT_DIR}}/bin/{{.BUILD_CONFIGURATION}}/{{.TARGET_FRAMEWORK}}'
+  TARGET_FRAMEWORK: net9.0
+  PROJECT_PATH: "/Users/celian/Desktop/Jellyfin/jellyfin-plugin-DiscordNotifier"
+  JELLYFIN_CONFIG_PATH: "/Users/celian/config/jellyfin"
+
+  BUILD_DIR: '{{.PROJECT_PATH}}/{{.PLUGIN_NAME}}/bin/Debug/{{.TARGET_FRAMEWORK}}'
   DLL_PATH: '{{.BUILD_DIR}}/{{.PLUGIN_NAME}}.dll'
-  CONFIG_DIR: /home/cedev/Desktop/config-jellyfin/data/plugins/configurations/DiscordNotifier
-  PLUGIN_DIR: /home/cedev/Desktop/config-jellyfin/data/plugins/configurations
+  XML_PATH: '{{.BUILD_DIR}}/{{.PLUGIN_NAME}}.xml'
+  
+  PLUGIN_DEST_PATH: '{{.JELLYFIN_CONFIG_PATH}}/plugins/{{.PLUGIN_NAME}}'
+  CONFIG_DIR: '{{.JELLYFIN_CONFIG_PATH}}/plugins/configurations'
   DOCKER_CONTAINER: jellyfin
 
 tasks:
-
   build:
-    desc: Build du plugin en Debug
+    desc: Build, Deploy and Restart
     cmds:
-      - dotnet build {{.PROJECT_DIR}} -c {{.BUILD_CONFIGURATION}}
-      - if [ ! -d "{{.CONFIG_DIR}}" ]; then sudo mkdir -p "{{.CONFIG_DIR}}"; fi
-      - sudo mv -f "{{.DLL_PATH}}" "{{.CONFIG_DIR}}/"
-      - docker restart "{{.DOCKER_CONTAINER}}"
+      - dotnet build '{{.PROJECT_PATH}}/{{.PLUGIN_NAME}}' -c Debug
 
+      - if [ ! -d "{{.PLUGIN_DEST_PATH}}" ]; then sudo mkdir -p "{{.PLUGIN_DEST_PATH}}"; fi
+      - if [ ! -d "{{.CONFIG_DIR}}" ]; then sudo mkdir -p "{{.CONFIG_DIR}}"; fi
+
+      - sudo cp -f "{{.DLL_PATH}}" "{{.PLUGIN_DEST_PATH}}/"
+      - sudo cp -f "{{.XML_PATH}}" "{{.CONFIG_DIR}}/"
+
+      - sudo chown -R $(whoami):$(id -gn) "{{.PLUGIN_DEST_PATH}}"
+      - sudo chmod 755 "{{.PLUGIN_DEST_PATH}}"
+      - sudo chmod 644 "{{.PLUGIN_DEST_PATH}}/{{.PLUGIN_NAME}}.dll"
+      - sudo chmod 644 "{{.CONFIG_DIR}}/{{.PLUGIN_NAME}}.xml"
+
+      - docker restart "{{.DOCKER_CONTAINER}}"
+      
   clean:
-    desc: Delete bin/ + obj/ + dll + xml on jellyfin
+    desc: Clean local bin and remove plugin from Jellyfin
     cmds:
-      - rm -rf "{{.PROJECT_DIR}}/bin" "{{.PROJECT_DIR}}/obj"
-      - if [ -f "{{.CONFIG_DIR}}/{{.PLUGIN_NAME}}.dll" ]; then sudo rm -f "{{.CONFIG_DIR}}/{{.PLUGIN_NAME}}.dll"; fi
-      - if [ -f "{{.PLUGIN_DIR}}/{{.PLUGIN_NAME}}.xml" ]; then sudo rm "{{.PLUGIN_DIR}}/{{.PLUGIN_NAME}}.xml"; fi
+      - rm -rf '{{.PROJECT_PATH}}/{{.PLUGIN_NAME}}/bin' '{{.PROJECT_PATH}}/{{.PLUGIN_NAME}}/obj'
+      - if [ -d "{{.PLUGIN_DEST_PATH}}" ]; then sudo rm -rf "{{.PLUGIN_DEST_PATH}}"; fi
+      - docker restart "{{.DOCKER_CONTAINER}}"
