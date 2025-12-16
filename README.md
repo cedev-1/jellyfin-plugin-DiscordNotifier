@@ -8,11 +8,13 @@
 
 This plugin allows you to send notifications to your Discord server when events occur on your Jellyfin media server. You can configure the notifications to be sent for various events such as new media added, media played, and more.
 
-For the moment, I have only developed the notifications (v1.5.0.0) :
+For the moment, I have only developed the notifications (v1.6.0.0) :
  - UserCreated
  - UserDeleted
  - UserConnection
  - UserFailedConnection
+
+dotnet version : 9.0
 
 ## Installation
 
