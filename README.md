@@ -42,4 +42,6 @@ task build
 task clean
 ```
 
+## License
 
+MIT
