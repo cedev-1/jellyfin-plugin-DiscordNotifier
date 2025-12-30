@@ -44,4 +44,4 @@ task clean
 
 ## License
 
-MIT
+LICENSE [MIT](./LICENSE)
