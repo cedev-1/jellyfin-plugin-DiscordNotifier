@@ -2,40 +2,61 @@ version: '3'
 
 vars:
   PLUGIN_NAME: Jellyfin.Plugin.DiscordNotifier
+  PLUGIN_VERSION: 1.6.0.0
   TARGET_FRAMEWORK: net9.0
-  PROJECT_PATH: "/Users/celian/Desktop/Jellyfin/jellyfin-plugin-DiscordNotifier"
-  JELLYFIN_CONFIG_PATH: "/Users/celian/config/jellyfin"
+  PROJECT_PATH: "/Users/cedev/Desktop/github/jellyfin-plugin-DiscordNotifier"
+  JELLYFIN_CONFIG_PATH: "/Users/cedev/config/jellyfin"
 
   BUILD_DIR: '{{.PROJECT_PATH}}/{{.PLUGIN_NAME}}/bin/Debug/{{.TARGET_FRAMEWORK}}'
   DLL_PATH: '{{.BUILD_DIR}}/{{.PLUGIN_NAME}}.dll'
   XML_PATH: '{{.BUILD_DIR}}/{{.PLUGIN_NAME}}.xml'
   
   PLUGIN_DEST_PATH: '{{.JELLYFIN_CONFIG_PATH}}/plugins/{{.PLUGIN_NAME}}'
-  CONFIG_DIR: '{{.JELLYFIN_CONFIG_PATH}}/plugins/configurations'
   DOCKER_CONTAINER: jellyfin
 
 tasks:
   build:
-    desc: Build, Deploy and Restart
+    desc: Build and deploy plugin to Jellyfin
     cmds:
+      - echo "Building plugin..."
       - dotnet build '{{.PROJECT_PATH}}/{{.PLUGIN_NAME}}' -c Debug
-
-      - if [ ! -d "{{.PLUGIN_DEST_PATH}}" ]; then sudo mkdir -p "{{.PLUGIN_DEST_PATH}}"; fi
-      - if [ ! -d "{{.CONFIG_DIR}}" ]; then sudo mkdir -p "{{.CONFIG_DIR}}"; fi
-
-      - sudo cp -f "{{.DLL_PATH}}" "{{.PLUGIN_DEST_PATH}}/"
-      - sudo cp -f "{{.XML_PATH}}" "{{.CONFIG_DIR}}/"
-
-      - sudo chown -R $(whoami):$(id -gn) "{{.PLUGIN_DEST_PATH}}"
-      - sudo chmod 755 "{{.PLUGIN_DEST_PATH}}"
-      - sudo chmod 644 "{{.PLUGIN_DEST_PATH}}/{{.PLUGIN_NAME}}.dll"
-      - sudo chmod 644 "{{.CONFIG_DIR}}/{{.PLUGIN_NAME}}.xml"
-
-      - docker restart "{{.DOCKER_CONTAINER}}"
       
+      - echo "Cleaning old plugin versions..."
+      - sudo rm -rf "{{.JELLYFIN_CONFIG_PATH}}/data/plugins/configurations/{{.PLUGIN_NAME}}"*
+      
+      - echo "Creating plugin directory..."
+      - sudo mkdir -p "{{.PLUGIN_DEST_PATH}}"
+      
+      - echo "Copying plugin files..."
+      - sudo cp -f "{{.DLL_PATH}}" "{{.PLUGIN_DEST_PATH}}/"
+      - sudo cp -f "{{.XML_PATH}}" "{{.PLUGIN_DEST_PATH}}/"
+      
+      - echo "Setting permissions for LinuxServer Jellyfin user abc..."
+      - docker exec {{.DOCKER_CONTAINER}} sh -c "chown -R 911:911 /config/data/plugins/configurations/{{.PLUGIN_NAME}} 2>/dev/null || true"
+      - docker exec {{.DOCKER_CONTAINER}} sh -c "chmod 755 /config/data/plugins/configurations/{{.PLUGIN_NAME}} 2>/dev/null || true"
+      - docker exec {{.DOCKER_CONTAINER}} sh -c "chmod 644 /config/data/plugins/configurations/{{.PLUGIN_NAME}}/*.dll 2>/dev/null || true"
+      
+      - echo "Restarting Jellyfin..."
+      - docker restart {{.DOCKER_CONTAINER}}
+      
+      - echo "Done! Plugin deployed."
+
   clean:
-    desc: Clean local bin and remove plugin from Jellyfin
+    desc: Remove plugin and clean build files
     cmds:
       - rm -rf '{{.PROJECT_PATH}}/{{.PLUGIN_NAME}}/bin' '{{.PROJECT_PATH}}/{{.PLUGIN_NAME}}/obj'
-      - if [ -d "{{.PLUGIN_DEST_PATH}}" ]; then sudo rm -rf "{{.PLUGIN_DEST_PATH}}"; fi
-      - docker restart "{{.DOCKER_CONTAINER}}"
+      - sudo rm -rf "{{.PLUGIN_DEST_PATH}}"
+      - sudo rm -rf "{{.JELLYFIN_CONFIG_PATH}}/data/plugins/configurations/DiscordNotifier"
+      - docker restart {{.DOCKER_CONTAINER}}
+
+  check:
+    desc: Check plugin status in Jellyfin
+    cmds:
+      - echo "Checking plugin directory..."
+      - ls -la "{{.JELLYFIN_CONFIG_PATH}}/data/plugins/configurations/"
+      - echo ""
+      - echo "Checking permissions in container..."
+      - docker exec {{.DOCKER_CONTAINER}} ls -la /config/data/plugins/configurations/ || echo "Container not running"
+      - echo ""
+      - echo "Checking Jellyfin logs for plugin loading..."
+      - docker logs {{.DOCKER_CONTAINER}} 2>&1 | grep -i "DiscordNotifier" || echo "Plugin not found in logs"
