@@ -1,4 +1,7 @@
+using System;
+using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.DiscordNotifier
@@ -6,40 +9,20 @@ namespace Jellyfin.Plugin.DiscordNotifier
     /// <summary>
     /// Handles sending messages to Discord webhooks.
     /// </summary>
-    public class DiscordSender : IDisposable
+    public class DiscordSender
     {
-        private readonly HttpClient _httpClient;
+        private readonly IHttpClientFactory _httpClientFactory;
         private readonly ILogger<DiscordSender> _logger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DiscordSender"/> class.
         /// </summary>
+        /// <param name="httpClientFactory">The HTTP client factory.</param>
         /// <param name="logger">The logger instance for logging messages.</param>
-        public DiscordSender(ILogger<DiscordSender> logger)
+        public DiscordSender(IHttpClientFactory httpClientFactory, ILogger<DiscordSender> logger)
         {
-            _httpClient = new HttpClient();
+            _httpClientFactory = httpClientFactory;
             _logger = logger;
-        }
-
-        /// <summary>
-        /// Releases all resources used by the <see cref="DiscordSender"/>.
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Releases the unmanaged resources used by the <see cref="DiscordSender"/> and optionally releases the managed resources.
-        /// </summary>
-        /// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                _httpClient?.Dispose();
-            }
         }
 
         /// <summary>
@@ -49,9 +32,7 @@ namespace Jellyfin.Plugin.DiscordNotifier
         /// <param name="jsonMessage">The JSON formatted message to send.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation that returns true if successful, false otherwise.</returns>
         /// <exception cref="ArgumentNullException">Thrown when webhookUrl or jsonMessage is null or empty.</exception>
-        public async Task<bool> SendPostToWebhook(
-            string webhookUrl,
-            string jsonMessage)
+        public async Task<bool> SendPostToWebhook(string webhookUrl, string jsonMessage)
         {
             if (string.IsNullOrWhiteSpace(webhookUrl))
             {
@@ -67,9 +48,10 @@ namespace Jellyfin.Plugin.DiscordNotifier
 
             try
             {
+                var client = _httpClientFactory.CreateClient();
                 using var content = new StringContent(jsonMessage, Encoding.UTF8, "application/json");
 
-                var response = await _httpClient.PostAsync(webhookUrl, content).ConfigureAwait(false);
+                var response = await client.PostAsync(new Uri(webhookUrl), content).ConfigureAwait(false);
 
                 if (!response.IsSuccessStatusCode)
                 {

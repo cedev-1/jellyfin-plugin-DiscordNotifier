@@ -1,6 +1,5 @@
 using System.Text.Json;
 using Jellyfin.Data.Events.Users;
-using MediaBrowser.Controller;
 using MediaBrowser.Controller.Events;
 using Jellyfin.Plugin.DiscordNotifier.Templates;
 using Microsoft.Extensions.Logging;
@@ -14,22 +13,16 @@ public class UserCreatedNotifier : IEventConsumer<UserCreatedEventArgs>
 {
     private readonly DiscordSender _sender;
     private readonly ILogger<UserCreatedNotifier> _logger;
-    private readonly IServerApplicationHost _applicationHost;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="UserCreatedNotifier"/> class.
     /// </summary>
     /// <param name="sender">The Discord sender service.</param>
     /// <param name="logger">The logger instance.</param>
-    /// <param name="applicationHost">The server application host.</param>
-    public UserCreatedNotifier(
-        DiscordSender sender,
-        ILogger<UserCreatedNotifier> logger,
-        IServerApplicationHost applicationHost)
+    public UserCreatedNotifier(DiscordSender sender, ILogger<UserCreatedNotifier> logger)
     {
         _sender = sender;
         _logger = logger;
-        _applicationHost = applicationHost;
     }
 
     /// <summary>

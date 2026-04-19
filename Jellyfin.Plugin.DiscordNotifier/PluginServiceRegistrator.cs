@@ -5,7 +5,6 @@ using MediaBrowser.Controller.Plugins;
 using MediaBrowser.Controller.Events.Authentication;
 using Microsoft.Extensions.DependencyInjection;
 using Jellyfin.Plugin.DiscordNotifier.Notifiers;
-using Jellyfin.Plugin.DiscordNotifier.Configuration;
 
 namespace Jellyfin.Plugin.DiscordNotifier;
 
@@ -21,21 +20,12 @@ public class PluginServiceRegistrator : IPluginServiceRegistrator
     /// <param name="applicationHost">The application host.</param>
     public void RegisterServices(IServiceCollection serviceCollection, IServerApplicationHost applicationHost)
     {
-        // Register sender.
-        serviceCollection.AddScoped<DiscordSender>();
+        serviceCollection.AddSingleton<DiscordSender>();
 
-        // Register PluginConfiguration
-        serviceCollection.AddScoped<PluginConfiguration>();
-
-        // Register application host
-        serviceCollection.AddSingleton(applicationHost);
-
-        // User consumers.
         serviceCollection.AddSingleton<IEventConsumer<UserCreatedEventArgs>, UserCreatedNotifier>();
-        serviceCollection.AddScoped<IEventConsumer<UserDeletedEventArgs>, UserDeletedNotifier>();
+        serviceCollection.AddSingleton<IEventConsumer<UserDeletedEventArgs>, UserDeletedNotifier>();
 
-        // Security consumers.
-        serviceCollection.AddScoped<IEventConsumer<AuthenticationResultEventArgs>, AuthenticationSuccessNotifier>();
-        serviceCollection.AddScoped<IEventConsumer<AuthenticationRequestEventArgs>, AuthenticationFailureNotifier>();
+        serviceCollection.AddSingleton<IEventConsumer<AuthenticationResultEventArgs>, AuthenticationSuccessNotifier>();
+        serviceCollection.AddSingleton<IEventConsumer<AuthenticationRequestEventArgs>, AuthenticationFailureNotifier>();
     }
 }

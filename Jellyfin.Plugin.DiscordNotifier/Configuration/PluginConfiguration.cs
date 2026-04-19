@@ -1,4 +1,3 @@
-using Jellyfin.Plugin.DiscordNotifier.Notifiers;
 using MediaBrowser.Model.Plugins;
 
 namespace Jellyfin.Plugin.DiscordNotifier.Configuration
@@ -16,6 +15,7 @@ namespace Jellyfin.Plugin.DiscordNotifier.Configuration
             EnablePlugin = true;
             WebhookUrl = string.Empty;
             ServerUrl = string.Empty;
+            ServerName = string.Empty;
             UserCreatedNotifier = true;
             UserDeletedNotifier = true;
             AuthenticationSuccessNotifier = true;
@@ -36,6 +36,11 @@ namespace Jellyfin.Plugin.DiscordNotifier.Configuration
         /// Gets or sets the Jellyfin server URL.
         /// </summary>
         public string ServerUrl { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the display name shown in Discord notification footers.
+        /// </summary>
+        public string ServerName { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets a value indicating whether the UserCreatedNotifier is enabled.

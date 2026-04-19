@@ -1,6 +1,5 @@
 using System.Text.Json;
 using Jellyfin.Data.Events.Users;
-using MediaBrowser.Controller;
 using MediaBrowser.Controller.Events;
 using Jellyfin.Plugin.DiscordNotifier.Templates;
 using Microsoft.Extensions.Logging;
@@ -10,20 +9,14 @@ namespace Jellyfin.Plugin.DiscordNotifier.Notifiers
     /// <summary>
     /// Notifier that sends a Discord message when a user is deleted.
     /// </summary>
-    /// <remarks>
-    /// Initializes a new instance of the <see cref="UserDeletedNotifier"/> class.
-    /// </remarks>
     /// <param name="sender">The Discord sender service.</param>
     /// <param name="logger">The logger instance.</param>
-    /// <param name="applicationHost">The server application host.</param>
     public class UserDeletedNotifier(
         DiscordSender sender,
-        ILogger<UserDeletedNotifier> logger,
-        IServerApplicationHost applicationHost) : IEventConsumer<UserDeletedEventArgs>
+        ILogger<UserDeletedNotifier> logger) : IEventConsumer<UserDeletedEventArgs>
     {
         private readonly DiscordSender _sender = sender;
         private readonly ILogger<UserDeletedNotifier> _logger = logger;
-        private readonly IServerApplicationHost _applicationHost = applicationHost;
 
         /// <summary>
         /// Handles the user deleted event by sending a notification to Discord.

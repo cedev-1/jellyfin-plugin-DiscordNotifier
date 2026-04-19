@@ -1,4 +1,7 @@
+using System;
 using System.Text.Json;
+using System.Threading.Tasks;
+using Jellyfin.Plugin.DiscordNotifier.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -18,11 +21,11 @@ namespace Jellyfin.Plugin.DiscordNotifier.Controllers
         /// Initializes a new instance of the <see cref="TestNotifierController"/> class.
         /// </summary>
         /// <param name="logger">The logger for the controller.</param>
-        /// <param name="senderLogger">The logger for the Discord sender.</param>
-        public TestNotifierController(ILogger<TestNotifierController> logger, ILogger<DiscordSender> senderLogger)
+        /// <param name="sender">The Discord sender service.</param>
+        public TestNotifierController(ILogger<TestNotifierController> logger, DiscordSender sender)
         {
             _logger = logger;
-            _sender = new DiscordSender(senderLogger);
+            _sender = sender;
         }
 
         /// <summary>
@@ -33,24 +36,21 @@ namespace Jellyfin.Plugin.DiscordNotifier.Controllers
         [HttpGet]
         public async Task<ActionResult<string>> Get([FromQuery] string webhookUrl)
         {
-            var testMessage = new
+            var config = Plugin.Config;
+
+            var testMessage = new DiscordWebhookPayload
             {
-                content = string.Empty,
-                embeds = new[]
-                {
-                    new
+                Embeds =
+                [
+                    new DiscordEmbed
                     {
-                        title = "🪼 Test Notification",
-                        description = $"This is a test message from **Jellyfin Discord Notifier**.",
-                        color = 0xaa5cc3,
-                        footer = new
-                        {
-                            text = "Jellyfin Discord Notifier",
-                            icon_url = "https://static-00.iconduck.com/assets.00/jellyfin-icon-256x255-u0iypdp6.png"
-                        },
-                        timestamp = DateTime.UtcNow.ToString("o")
+                        Title = "🪼 Test Notification",
+                        Description = "This is a test message from **Jellyfin Discord Notifier**.",
+                        Color = 0xAA5CC3,
+                        Footer = DiscordEmbedFooter.FromConfig(config),
+                        Timestamp = DateTime.UtcNow.ToString("o")
                     }
-                }
+                ]
             };
             string jsonMessage = JsonSerializer.Serialize(testMessage);
 

@@ -1,7 +1,8 @@
-using MediaBrowser.Controller.Events.Authentication;
+using System;
 using Jellyfin.Plugin.DiscordNotifier.Configuration;
-using Microsoft.Extensions.Logging;
+using Jellyfin.Plugin.DiscordNotifier.Models;
 using Jellyfin.Plugin.DiscordNotifier.Utils;
+using MediaBrowser.Controller.Events.Authentication;
 
 namespace Jellyfin.Plugin.DiscordNotifier.Templates;
 
@@ -10,42 +11,35 @@ namespace Jellyfin.Plugin.DiscordNotifier.Templates;
 /// </summary>
 public static class AuthenticationFailureTemplate
 {
-    private static readonly ILogger _logger = Plugin.Logger;
-
     /// <summary>
     /// Creates a Discord notification message for failed authentication attempts.
     /// </summary>
     /// <param name="eventArgs">The authentication request event arguments containing user information.</param>
     /// <param name="config">The plugin configuration containing server settings.</param>
-    /// <returns>An anonymous object representing the Discord webhook message.</returns>
-    public static object CreateMessage(AuthenticationRequestEventArgs eventArgs, PluginConfiguration config)
+    /// <returns>The Discord webhook payload.</returns>
+    public static DiscordWebhookPayload CreateMessage(AuthenticationRequestEventArgs eventArgs, PluginConfiguration config)
     {
         string serverUrl = ServerUrlHelper.GetServerUrl(config);
 
-        return new
+        return new DiscordWebhookPayload
         {
-            content = string.Empty,
-            embeds = new[]
-            {
-                new
+            Embeds =
+            [
+                new DiscordEmbed
                 {
-                    title = "🪼 Login failed",
-                    description = $"Failed login attempt for user **{eventArgs.Username}**.",
-                    url = $"{serverUrl}/web/index.html#!/dashboard/users",
-                    color = 0xFF0000,
-                    fields = new[]
-                    {
-                        new { name = "IP Address", value = eventArgs.RemoteEndPoint ?? "Unknown", inline = true },
-                        new { name = "Device", value = eventArgs.DeviceName ?? "Unknown", inline = true },
-                    },
-                    footer = new
-                    {
-                        text = "Jellyfin Discord Notifier",
-                        icon_url = "https://static-00.iconduck.com/assets.00/jellyfin-icon-256x255-u0iypdp6.png"
-                    },
-                    timestamp = DateTime.UtcNow.ToString("o")
+                    Title = "🪼 Login Failed",
+                    Description = $"Failed login attempt for user **{eventArgs.Username}**.",
+                    Url = $"{serverUrl}/web/index.html#!/dashboard/users",
+                    Color = 0xE74C3C,
+                    Fields =
+                    [
+                        new DiscordEmbedField { Name = "IP Address", Value = eventArgs.RemoteEndPoint ?? "Unknown", Inline = true },
+                        new DiscordEmbedField { Name = "Device", Value = eventArgs.DeviceName ?? "Unknown", Inline = true }
+                    ],
+                    Footer = DiscordEmbedFooter.FromConfig(config),
+                    Timestamp = DateTime.UtcNow.ToString("o")
                 }
-            }
+            ]
         };
     }
 }

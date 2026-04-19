@@ -37,6 +37,12 @@
                         <div class="fieldDescription">Enter your Jellyfin server URL (e.g., http://localhost:8096 or https://jellyfin.yourdomain.com).</div>
                     </div>
 
+                    <div class="inputContainer">
+                        <label class="inputLabel inputLabelUnfocused" for="serverName">Server Name</label>
+                        <input id="serverName" name="serverName" type="text" is="emby-input" placeholder="My Jellyfin" />
+                        <div class="fieldDescription">Display name shown in Discord notification footers (e.g., "Home Server"). Leave empty to use the default.</div>
+                    </div>
+
                     <div>
                         <button id="testButton" is="emby-button" class="raised button block emby-button">
                             <span>Test webhook</span>
