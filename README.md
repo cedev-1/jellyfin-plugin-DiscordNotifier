@@ -8,11 +8,14 @@
 
 This plugin allows you to send notifications to your Discord server when events occur on your Jellyfin media server. You can configure the notifications to be sent for various events such as new media added, media played, and more.
 
-For the moment, I have only developed the notifications (v1.6.0.0) :
+Current notifications (v1.7.0.0) :
  - UserCreated
  - UserDeleted
  - UserConnection
  - UserFailedConnection
+ - ItemAdded
+ - PlaybackStart — (with options)
+ - PlaybackStop — (with options)
 
 dotnet version : 9.0
 
@@ -41,6 +44,24 @@ For Task you can run
 task build
 task clean
 ```
+
+## TODO
+
+The following features are planned.
+
+### Notifications
+
+- [ ] `UserLockedOut` — notify when an account is locked after too many failed attempts
+- [ ] `UserUpdated` — notify when a user account is modified
+- [ ] `UserPasswordChanged` — notify when a user changes their password
+- [ ] `SessionStart` — notify when a new client session is opened (before playback)
+- [ ] `PlaybackProgress` — notify at a defined interval during playback
+- [ ] `ItemDeleted` — notify when media is removed from the library
+- [ ] `TaskCompleted` — notify when a scheduled task finishes (library scan, backup, etc.)
+
+---
+
+> Want to contribute? Open an [issue](https://github.com/cedev-1/Jellyfin-Plugin-DiscordNotifier/issues) to discuss or submit a [PR](https://github.com/cedev-1/Jellyfin-Plugin-DiscordNotifier/pulls) directly.
 
 ## License
 
