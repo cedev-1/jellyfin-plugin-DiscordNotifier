@@ -18,6 +18,13 @@ export default function (view) {
             document.querySelector('#UserDeletedNotifier').checked = config.UserDeletedNotifier || false;
             document.querySelector('#AuthenticationSuccessNotifier').checked = config.AuthenticationSuccessNotifier || false;
             document.querySelector('#AuthenticationFailureNotifier').checked = config.AuthenticationFailureNotifier || false;
+            document.querySelector('#ItemAddedNotifier').checked = config.ItemAddedNotifier || false;
+            document.querySelector('#PlaybackStartNotifier').checked = config.PlaybackStartNotifier || false;
+            document.querySelector('#PlaybackStopNotifier').checked = config.PlaybackStopNotifier || false;
+            document.querySelector('#PlaybackNotifyMovies').checked = config.PlaybackNotifyMovies || false;
+            document.querySelector('#PlaybackNotifySeries').checked = config.PlaybackNotifySeries || false;
+            document.querySelector('#PlaybackDetailedMode').checked = config.PlaybackDetailedMode || false;
+            document.querySelector('#PlaybackTranscodeOnlyNotifier').checked = config.PlaybackTranscodeOnlyNotifier || false;
             
         } catch (error) {
             console.error('Error loading config:', error);
@@ -44,6 +51,13 @@ export default function (view) {
             config.UserDeletedNotifier = document.querySelector('#UserDeletedNotifier').checked;
             config.AuthenticationSuccessNotifier = document.querySelector('#AuthenticationSuccessNotifier').checked;
             config.AuthenticationFailureNotifier = document.querySelector('#AuthenticationFailureNotifier').checked;
+            config.ItemAddedNotifier = document.querySelector('#ItemAddedNotifier').checked;
+            config.PlaybackStartNotifier = document.querySelector('#PlaybackStartNotifier').checked;
+            config.PlaybackStopNotifier = document.querySelector('#PlaybackStopNotifier').checked;
+            config.PlaybackNotifyMovies = document.querySelector('#PlaybackNotifyMovies').checked;
+            config.PlaybackNotifySeries = document.querySelector('#PlaybackNotifySeries').checked;
+            config.PlaybackDetailedMode = document.querySelector('#PlaybackDetailedMode').checked;
+            config.PlaybackTranscodeOnlyNotifier = document.querySelector('#PlaybackTranscodeOnlyNotifier').checked;
 
             console.log('Saving config:', config);
             

@@ -1,9 +1,11 @@
 using Jellyfin.Data.Events.Users;
 using MediaBrowser.Controller;
 using MediaBrowser.Controller.Events;
+using MediaBrowser.Controller.Library;
 using MediaBrowser.Controller.Plugins;
 using MediaBrowser.Controller.Events.Authentication;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Jellyfin.Plugin.DiscordNotifier.Notifiers;
 
 namespace Jellyfin.Plugin.DiscordNotifier;
@@ -27,5 +29,8 @@ public class PluginServiceRegistrator : IPluginServiceRegistrator
 
         serviceCollection.AddSingleton<IEventConsumer<AuthenticationResultEventArgs>, AuthenticationSuccessNotifier>();
         serviceCollection.AddSingleton<IEventConsumer<AuthenticationRequestEventArgs>, AuthenticationFailureNotifier>();
+        serviceCollection.AddSingleton<IHostedService, ItemAddedNotifier>();
+        serviceCollection.AddSingleton<IEventConsumer<PlaybackStartEventArgs>, PlaybackStartNotifier>();
+        serviceCollection.AddSingleton<IEventConsumer<PlaybackStopEventArgs>, PlaybackStopNotifier>();
     }
 }

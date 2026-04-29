@@ -20,6 +20,13 @@ namespace Jellyfin.Plugin.DiscordNotifier.Configuration
             UserDeletedNotifier = true;
             AuthenticationSuccessNotifier = true;
             AuthenticationFailureNotifier = true;
+            ItemAddedNotifier = true;
+            PlaybackStartNotifier = false;
+            PlaybackTranscodeOnlyNotifier = false;
+            PlaybackNotifyMovies = true;
+            PlaybackNotifySeries = false;
+            PlaybackDetailedMode = false;
+            PlaybackStopNotifier = false;
         }
 
         /// <summary>
@@ -61,5 +68,41 @@ namespace Jellyfin.Plugin.DiscordNotifier.Configuration
         /// Gets or sets a value indicating whether the AuthenticationFailureNotifier is enabled.
         /// </summary>
         public bool AuthenticationFailureNotifier { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the ItemAddedNotifier is enabled.
+        /// </summary>
+        public bool ItemAddedNotifier { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the PlaybackStartNotifier is enabled.
+        /// </summary>
+        public bool PlaybackStartNotifier { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether to only notify on transcoding sessions.
+        /// </summary>
+        public bool PlaybackTranscodeOnlyNotifier { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether to notify for movie playback.
+        /// </summary>
+        public bool PlaybackNotifyMovies { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether to notify for series episode playback.
+        /// </summary>
+        public bool PlaybackNotifySeries { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether to show detailed playback info (codecs, client, transcode reasons).
+        /// When false, a simple notification is sent instead.
+        /// </summary>
+        public bool PlaybackDetailedMode { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the PlaybackStopNotifier is enabled.
+        /// </summary>
+        public bool PlaybackStopNotifier { get; set; }
     }
 }

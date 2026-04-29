@@ -21,13 +21,31 @@ public sealed class DiscordWebhookPayload
 }
 
 /// <summary>
+/// Represents the author section of a Discord embed.
+/// </summary>
+public sealed class DiscordEmbedAuthor
+{
+    /// <summary>Gets the author name.</summary>
+    [JsonPropertyName("name")]
+    public string Name { get; init; } = string.Empty;
+
+    /// <summary>Gets the URL that the author name links to.</summary>
+    [JsonPropertyName("url")]
+    public string? Url { get; init; }
+}
+
+/// <summary>
 /// Represents a single Discord embed.
 /// </summary>
 public sealed class DiscordEmbed
 {
+    /// <summary>Gets the author displayed above the title.</summary>
+    [JsonPropertyName("author")]
+    public DiscordEmbedAuthor? Author { get; init; }
+
     /// <summary>Gets the embed title.</summary>
     [JsonPropertyName("title")]
-    public string Title { get; init; } = string.Empty;
+    public string? Title { get; init; }
 
     /// <summary>Gets the embed description.</summary>
     [JsonPropertyName("description")]
@@ -45,6 +63,10 @@ public sealed class DiscordEmbed
     [JsonPropertyName("fields")]
     public DiscordEmbedField[]? Fields { get; init; }
 
+    /// <summary>Gets the thumbnail image displayed to the right of the embed.</summary>
+    [JsonPropertyName("thumbnail")]
+    public DiscordEmbedMedia? Thumbnail { get; init; }
+
     /// <summary>Gets the footer.</summary>
     [JsonPropertyName("footer")]
     public DiscordEmbedFooter? Footer { get; init; }
@@ -52,6 +74,16 @@ public sealed class DiscordEmbed
     /// <summary>Gets the ISO 8601 timestamp.</summary>
     [JsonPropertyName("timestamp")]
     public string? Timestamp { get; init; }
+}
+
+/// <summary>
+/// Represents a media object (image or thumbnail) inside a Discord embed.
+/// </summary>
+public sealed class DiscordEmbedMedia
+{
+    /// <summary>Gets the media URL.</summary>
+    [JsonPropertyName("url")]
+    public string Url { get; init; } = string.Empty;
 }
 
 /// <summary>
