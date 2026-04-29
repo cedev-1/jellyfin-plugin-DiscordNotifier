@@ -3,39 +3,26 @@ version: '3'
 vars:
   PLUGIN_NAME: Jellyfin.Plugin.DiscordNotifier
   TARGET_FRAMEWORK: net9.0
-  PROJECT_PATH: "/Users/celian/Desktop/Jellyfin/jellyfin-plugin-DiscordNotifier"
-  JELLYFIN_CONFIG_PATH: "/Users/celian/config/jellyfin"
-
-  BUILD_DIR: '{{.PROJECT_PATH}}/{{.PLUGIN_NAME}}/bin/Debug/{{.TARGET_FRAMEWORK}}'
-  DLL_PATH: '{{.BUILD_DIR}}/{{.PLUGIN_NAME}}.dll'
-  XML_PATH: '{{.BUILD_DIR}}/{{.PLUGIN_NAME}}.xml'
-  
-  PLUGIN_DEST_PATH: '{{.JELLYFIN_CONFIG_PATH}}/plugins/{{.PLUGIN_NAME}}'
-  CONFIG_DIR: '{{.JELLYFIN_CONFIG_PATH}}/plugins/configurations'
   DOCKER_CONTAINER: jellyfin
+
+  BUILD_DIR: 'bin/Debug/{{.TARGET_FRAMEWORK}}'
+  PLUGIN_DEST: '../library/data/plugins/configurations/{{.PLUGIN_NAME}}'
 
 tasks:
   build:
     desc: Build, Deploy and Restart
     cmds:
-      - dotnet build '{{.PROJECT_PATH}}/{{.PLUGIN_NAME}}' -c Debug
+      - dotnet build {{.PLUGIN_NAME}}.csproj -c Debug
+      - rm -rf {{.PLUGIN_DEST}}
+      - mkdir -p {{.PLUGIN_DEST}}
+      - cp -f {{.BUILD_DIR}}/{{.PLUGIN_NAME}}.dll {{.PLUGIN_DEST}}/
+      - cp -f {{.BUILD_DIR}}/{{.PLUGIN_NAME}}.xml {{.PLUGIN_DEST}}/
+      - docker exec {{.DOCKER_CONTAINER}} sh -c "chown -R 911:911 /config/data/plugins/configurations/{{.PLUGIN_NAME}}"
+      - docker restart {{.DOCKER_CONTAINER}}
 
-      - if [ ! -d "{{.PLUGIN_DEST_PATH}}" ]; then sudo mkdir -p "{{.PLUGIN_DEST_PATH}}"; fi
-      - if [ ! -d "{{.CONFIG_DIR}}" ]; then sudo mkdir -p "{{.CONFIG_DIR}}"; fi
-
-      - sudo cp -f "{{.DLL_PATH}}" "{{.PLUGIN_DEST_PATH}}/"
-      - sudo cp -f "{{.XML_PATH}}" "{{.CONFIG_DIR}}/"
-
-      - sudo chown -R $(whoami):$(id -gn) "{{.PLUGIN_DEST_PATH}}"
-      - sudo chmod 755 "{{.PLUGIN_DEST_PATH}}"
-      - sudo chmod 644 "{{.PLUGIN_DEST_PATH}}/{{.PLUGIN_NAME}}.dll"
-      - sudo chmod 644 "{{.CONFIG_DIR}}/{{.PLUGIN_NAME}}.xml"
-
-      - docker restart "{{.DOCKER_CONTAINER}}"
-      
   clean:
-    desc: Clean local bin and remove plugin from Jellyfin
+    desc: Remove plugin and restart
     cmds:
-      - rm -rf '{{.PROJECT_PATH}}/{{.PLUGIN_NAME}}/bin' '{{.PROJECT_PATH}}/{{.PLUGIN_NAME}}/obj'
-      - if [ -d "{{.PLUGIN_DEST_PATH}}" ]; then sudo rm -rf "{{.PLUGIN_DEST_PATH}}"; fi
-      - docker restart "{{.DOCKER_CONTAINER}}"
+      - rm -rf bin obj
+      - rm -rf {{.PLUGIN_DEST}}
+      - docker restart {{.DOCKER_CONTAINER}}

@@ -50,8 +50,60 @@
                     </div>
 
                     <div class="sectionTitleContainer flex align-items-center">
-                        <h2>Notifier Settings</h2>
-                    </div>               
+                        <h2>Media Notifications</h2>
+                    </div>
+
+                    <div class="checkboxContainer checkboxContainer-withDescription">
+                        <label class="emby-checkbox-label">
+                            <input id="ItemAddedNotifier" name="ItemAddedNotifierCheckBox" type="checkbox" is="emby-checkbox" />
+                            <span>New Content Notifier</span>
+                        </label>
+                        <div class="checkboxDescription">Send a notification when movies, series, episodes, or albums are added to the library.</div>
+                    </div>
+
+                    <div class="checkboxContainer checkboxContainer-withDescription">
+                        <label class="emby-checkbox-label">
+                            <input id="PlaybackStartNotifier" name="PlaybackStartNotifierCheckBox" type="checkbox" is="emby-checkbox" />
+                            <span>Playback Start Notifier</span>
+                        </label>
+                        <div class="checkboxDescription">Send a notification when a playback session starts.</div>
+                    </div>
+
+                    <div class="checkboxContainer checkboxContainer-withDescription" style="padding-left: 1.5em;">
+                        <label class="emby-checkbox-label">
+                            <input id="PlaybackStopNotifier" name="PlaybackStopNotifierCheckBox" type="checkbox" is="emby-checkbox" />
+                            <span>Playback Stop Notifier</span>
+                        </label>
+                        <div class="checkboxDescription">Send a notification when a session stops, with progress and completion status.</div>
+                    </div>
+
+                    <div class="checkboxContainer checkboxContainer-withDescription" style="padding-left: 1.5em;">
+                        <label class="emby-checkbox-label">
+                            <input id="PlaybackMovieOnlyNotifier" name="PlaybackMovieOnlyNotifierCheckBox" type="checkbox" is="emby-checkbox" />
+                            <span>Movies only</span>
+                        </label>
+                        <div class="checkboxDescription">Only send playback notifications for movies (not episodes, music, etc.).</div>
+                    </div>
+
+                    <div class="checkboxContainer checkboxContainer-withDescription" style="padding-left: 1.5em;">
+                        <label class="emby-checkbox-label">
+                            <input id="PlaybackDetailedMode" name="PlaybackDetailedModeCheckBox" type="checkbox" is="emby-checkbox" />
+                            <span>Detailed mode</span>
+                        </label>
+                        <div class="checkboxDescription">Show codec info, client, device and transcode reasons. When off, a simple notification is sent.</div>
+                    </div>
+
+                    <div class="checkboxContainer checkboxContainer-withDescription" style="padding-left: 3em;">
+                        <label class="emby-checkbox-label">
+                            <input id="PlaybackTranscodeOnlyNotifier" name="PlaybackTranscodeOnlyNotifierCheckBox" type="checkbox" is="emby-checkbox" />
+                            <span>Transcoding sessions only</span>
+                        </label>
+                        <div class="checkboxDescription">In detailed mode, only notify when a session is transcoding.</div>
+                    </div>
+
+                    <div class="sectionTitleContainer flex align-items-center">
+                        <h2>Security &amp; User Notifications</h2>
+                    </div>
 
                     <div class="checkboxContainer checkboxContainer-withDescription">
                         <label class="emby-checkbox-label">
@@ -70,14 +122,14 @@
                     <div class="checkboxContainer checkboxContainer-withDescription">
                         <label class="emby-checkbox-label">
                             <input id="AuthenticationSuccessNotifier" name="AuthenticationSuccessNotifierCheckBox" type="checkbox" is="emby-checkbox" />
-                            <span>User Authentication success Notifier</span>
+                            <span>Login Success Notifier</span>
                         </label>
                     </div>
 
                     <div class="checkboxContainer checkboxContainer-withDescription">
                         <label class="emby-checkbox-label">
                             <input id="AuthenticationFailureNotifier" name="AuthenticationFailureNotifierCheckBox" type="checkbox" is="emby-checkbox" />
-                            <span>User Authentication Failure Notifier</span>
+                            <span>Login Failure Notifier</span>
                         </label>
                     </div>
 
