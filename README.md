@@ -30,7 +30,11 @@ https://raw.githubusercontent.com/cedev-1/Jellyfin-Plugin-DiscordNotifier/master
 
 ## Plugin Configuration
 
-![Plugin Config](./media/DiscordNotifier_config.png)
+<img width="909" height="692" alt="image" src="https://github.com/user-attachments/assets/8836bb18-51c2-4dc2-a7ef-d17df4935baa" />
+
+<img width="909" height="692" alt="image" src="https://github.com/user-attachments/assets/3e21ed71-39a7-4fdd-9a84-0ca83033270e" />
+
+<img width="909" height="475" alt="image" src="https://github.com/user-attachments/assets/d9c1fecc-3da8-4617-b944-fd732b211482" />
 
 ## Development
 
