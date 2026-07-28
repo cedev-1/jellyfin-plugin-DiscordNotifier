@@ -76,57 +76,58 @@
                         </button>
                     </div>
 
-                    <div class="sectionTitleContainer flex align-items-center" style="margin-top: 1.5em;">
-                        <h2>Notification Preview</h2>
-                    </div>
+                    <details id="previewToggle" style="margin-top: 1.5em; margin-bottom: 1.5em;">
+                        <summary style="cursor: pointer; font-size: 1.2em; font-weight: 600; user-select: none; padding: 0.3em 0;">Notification Preview</summary>
 
-                    <div class="selectContainer">
-                        <label class="selectLabel" for="previewEventSelect">Event Type</label>
-                        <select id="previewEventSelect" is="emby-select" class="emby-select">
-                            <optgroup label="Media">
-                                <option value="newMovie">New Movie</option>
-                                <option value="newSeriesGrouped">New Series (3 episodes)</option>
-                                <option value="newAlbumGrouped">New Album (5 tracks)</option>
-                                <option value="contentDeleted">Content Deleted</option>
-                                <option value="contentUpdated">Content Updated</option>
-                                <option value="subtitleFailure">Subtitle Download Failure</option>
-                                <option value="lyricFailure">Lyric Download Failure</option>
-                                <option value="watchStatus">Watch Status Update</option>
-                                <option value="watchStatusBatch">Watch Status Batch (8 items)</option>
-                            </optgroup>
-                            <optgroup label="Playback">
-                                <option value="playbackStart">Playback Start</option>
-                                <option value="playbackStartDetailed">Playback Start (Detailed)</option>
-                                <option value="playbackStop">Playback Stop</option>
-                                <option value="playbackProgress">Playback Progress</option>
-                            </optgroup>
-                            <optgroup label="Users &amp; Security">
-                                <option value="userCreated">User Created</option>
-                                <option value="userDeleted">User Deleted</option>
-                                <option value="loginSuccess">Login Success</option>
-                                <option value="loginFailure">Login Failure</option>
-                                <option value="userLockedOut">User Locked Out</option>
-                                <option value="passwordChanged">Password Changed</option>
-                                <option value="userUpdated">User Updated</option>
-                            </optgroup>
-                            <optgroup label="Server">
-                                <option value="sessionStart">Session Start</option>
-                                <option value="sessionEnded">Session Ended</option>
-                                <option value="taskCompleted">Task Completed</option>
-                                <option value="taskFailed">Task Failed</option>
-                                <option value="pendingRestart">Pending Restart</option>
-                                <option value="serverStarted">Server Started</option>
-                            </optgroup>
-                            <optgroup label="Plugins">
-                                <option value="pluginInstalled">Plugin Installed</option>
-                                <option value="pluginUpdated">Plugin Updated</option>
-                                <option value="pluginUninstalled">Plugin Uninstalled</option>
-                                <option value="pluginInstallFailed">Plugin Installation Failed</option>
-                                <option value="pluginInstallCancelled">Plugin Installation Cancelled</option>
-                                <option value="pluginInstalling">Plugin Installing</option>
-                            </optgroup>
-                        </select>
-                    </div>
+                        <div style="margin-top: 0.75em;">
+                            <div class="selectContainer">
+                                <label class="selectLabel" for="previewEventSelect">Event Type</label>
+                                <select id="previewEventSelect" is="emby-select" class="emby-select">
+                                    <optgroup label="Media">
+                                        <option value="newMovie">New Movie</option>
+                                        <option value="newSeriesGrouped">New Series (3 episodes)</option>
+                                        <option value="newAlbumGrouped">New Album (5 tracks)</option>
+                                        <option value="contentDeleted">Content Deleted</option>
+                                        <option value="contentUpdated">Content Updated</option>
+                                        <option value="subtitleFailure">Subtitle Download Failure</option>
+                                        <option value="lyricFailure">Lyric Download Failure</option>
+                                        <option value="watchStatus">Watch Status Update</option>
+                                        <option value="watchStatusBatch">Watch Status Batch (8 items)</option>
+                                    </optgroup>
+                                    <optgroup label="Playback">
+                                        <option value="playbackStart">Playback Start</option>
+                                        <option value="playbackStartDetailed">Playback Start (Detailed)</option>
+                                        <option value="playbackStop">Playback Stop</option>
+                                        <option value="playbackProgress">Playback Progress</option>
+                                    </optgroup>
+                                    <optgroup label="Users &amp; Security">
+                                        <option value="userCreated">User Created</option>
+                                        <option value="userDeleted">User Deleted</option>
+                                        <option value="loginSuccess">Login Success</option>
+                                        <option value="loginFailure">Login Failure</option>
+                                        <option value="userLockedOut">User Locked Out</option>
+                                        <option value="passwordChanged">Password Changed</option>
+                                        <option value="userUpdated">User Updated</option>
+                                    </optgroup>
+                                    <optgroup label="Server">
+                                        <option value="sessionStart">Session Start</option>
+                                        <option value="sessionEnded">Session Ended</option>
+                                        <option value="taskCompleted">Task Completed</option>
+                                        <option value="taskFailed">Task Failed</option>
+                                        <option value="pendingRestart">Pending Restart</option>
+                                        <option value="serverStarted">Server Started</option>
+                                    </optgroup>
+                                    <optgroup label="Plugins">
+                                        <option value="pluginInstalled">Plugin Installed</option>
+                                        <option value="pluginUpdated">Plugin Updated</option>
+                                        <option value="pluginUninstalled">Plugin Uninstalled</option>
+                                        <option value="pluginInstallFailed">Plugin Installation Failed</option>
+                                        <option value="pluginInstallCancelled">Plugin Installation Cancelled</option>
+                                        <option value="pluginInstalling">Plugin Installing</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+                        </div>
 
                     <div id="discordPreview" style="background: #313338; border-radius: 8px; padding: 16px 16px 16px 72px; position: relative; font-family: 'gg sans', 'Noto Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 16px; color: #dbdee1; margin: 1em 0 2em 0; min-height: 80px; line-height: 1.375;">
                         <!-- Avatar -->
@@ -154,6 +155,7 @@
                             <div id="previewThumbnail" style="width: 80px; height: 112px; border-radius: 4px; margin-left: 16px; flex-shrink: 0; background: linear-gradient(135deg, #5865f2 0%, #9b59b6 100%); display: none;"></div>
                         </div>
                     </div>
+                    </details>
 
                     <div class="sectionTitleContainer flex align-items-center">
                         <h2>Media Notifications</h2>

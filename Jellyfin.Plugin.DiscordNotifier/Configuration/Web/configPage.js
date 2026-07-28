@@ -588,6 +588,11 @@ export default function (view) {
     view.addEventListener('viewshow', loadConfig);
     document.getElementById('saveButton').addEventListener('click', saveConfig);
     document.getElementById('testButton').addEventListener('click', testWebhook);
+    document.getElementById('previewToggle').addEventListener('toggle', function() {
+        if (this.open) {
+            renderPreview();
+        }
+    });
     document.getElementById('previewEventSelect').addEventListener('change', renderPreview);
     document.getElementById('webhookUsername').addEventListener('input', function() {
         var warn = document.getElementById('webhookUsernameWarning');
