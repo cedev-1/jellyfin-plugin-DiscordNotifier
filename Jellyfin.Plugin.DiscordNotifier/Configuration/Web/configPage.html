@@ -16,7 +16,9 @@
                 <div class="sectionTitleContainer flex align-items-center">
                     <h1>Discord Notifier</h1>
                 </div>
+
                 <form id="DiscordNotifierConfigForm">
+
                     <div class="checkboxContainer checkboxContainer-withDescription">
                         <label class="emby-checkbox-label">
                             <input id="EnablePlugin" name="EnablePluginCheckBox" type="checkbox" is="emby-checkbox" />
@@ -24,27 +26,43 @@
                         </label>
                     </div>
 
-                    <div class="sectionTitleContainer flex align-items-center">
-                        <h2>Discord Configuration</h2>
+                    <!-- ═══════════════════════════════════════════ -->
+                    <!-- DISCORD CONNECTION                         -->
+                    <!-- ═══════════════════════════════════════════ -->
+
+                    <div class="sectionTitleContainer flex align-items-center" style="margin-top: 2em;">
+                        <h2>Discord Connection</h2>
                     </div>
 
                     <div class="inputContainer">
-                        <label class="inputLabel inputLabelUnfocused" for="webhookUrl">Discord Webhook URL</label>
+                        <label class="inputLabel inputLabelUnfocused" for="webhookUrl">Webhook URL</label>
                         <input id="webhookUrl" name="webhookUrl" type="text" is="emby-input" />
-                        <div class="fieldDescription">Insert your Discord webhook URL here. You can create one in your Discord server settings under Integrations.</div>
+                        <div class="fieldDescription">Your Discord webhook URL. Create one in Discord server settings under Integrations.</div>
                     </div>
 
                     <div class="inputContainer">
                         <label class="inputLabel inputLabelUnfocused" for="serverUrl">Jellyfin Server URL</label>
                         <input id="serverUrl" name="serverUrl" type="text" is="emby-input" placeholder="http://your-server:8096" />
-                        <div class="fieldDescription">Enter your Jellyfin server URL (e.g., http://localhost:8096 or https://jellyfin.yourdomain.com).</div>
+                        <div class="fieldDescription">Used to generate clickable links in notifications (e.g., http://localhost:8096).</div>
                     </div>
 
                     <div class="inputContainer">
                         <label class="inputLabel inputLabelUnfocused" for="serverName">Server Name</label>
                         <input id="serverName" name="serverName" type="text" is="emby-input" placeholder="My Jellyfin" />
-                        <div class="fieldDescription">Display name shown in Discord notification footers (e.g., "Home Server"). Leave empty to use the default.</div>
+                        <div class="fieldDescription">Shown in notification footers. Leave empty for default.</div>
                     </div>
+
+                    <div>
+                        <button id="testButton" type="button" is="emby-button" class="raised button block emby-button">
+                            <span>Test webhook</span>
+                        </button>
+                    </div>
+
+                    <!-- ═══════════════════════════════════════════ -->
+                    <!-- WEBHOOK APPEARANCE                         -->
+                    <!-- ═══════════════════════════════════════════ -->
+
+                    <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 2em 0;" />
 
                     <div class="sectionTitleContainer flex align-items-center">
                         <h2>Webhook Appearance</h2>
@@ -55,13 +73,13 @@
                             <div class="inputContainer">
                                 <label class="inputLabel inputLabelUnfocused" for="webhookUsername">Bot Display Name</label>
                                 <input id="webhookUsername" name="webhookUsername" type="text" is="emby-input" placeholder="Jellyfin" />
-                                <div class="fieldDescription">Custom name displayed for the webhook bot in Discord. Leave empty to use the webhook's default name. <strong>Cannot contain "discord"</strong> (API restriction).</div>
+                                <div class="fieldDescription">Custom name for the webhook bot in Discord. <strong>Cannot contain "discord"</strong> (API restriction).</div>
                                 <div id="webhookUsernameWarning" style="color: #e74c3c; font-size: 0.85em; margin-top: 4px; display: none;">Discord does not allow "discord" in the bot name.</div>
                             </div>
                             <div class="inputContainer">
                                 <label class="inputLabel inputLabelUnfocused" for="webhookAvatarUrl">Bot Avatar URL</label>
                                 <input id="webhookAvatarUrl" name="webhookAvatarUrl" type="text" is="emby-input" placeholder="https://example.com/avatar.png" />
-                                <div class="fieldDescription">URL of the image to use as the webhook bot's avatar. Leave empty for the default.</div>
+                                <div class="fieldDescription">Image URL for the webhook bot's avatar. Leave empty for default.</div>
                             </div>
                         </div>
                         <div id="avatarPreview" style="width: 48px; height: 48px; border-radius: 50%; background: #5865f2; margin-top: 1.8em; flex-shrink: 0; overflow: hidden; display: flex; align-items: center; justify-content: center;">
@@ -70,14 +88,12 @@
                         </div>
                     </div>
 
-                    <div>
-                        <button id="testButton" type="button" is="emby-button" class="raised button block emby-button">
-                            <span>Test webhook</span>
-                        </button>
-                    </div>
+                    <!-- ═══════════════════════════════════════════ -->
+                    <!-- NOTIFICATION PREVIEW                       -->
+                    <!-- ═══════════════════════════════════════════ -->
 
-                    <details id="previewToggle" style="margin-top: 1.5em; margin-bottom: 1.5em;">
-                        <summary style="cursor: pointer; font-size: 1.2em; font-weight: 600; user-select: none; padding: 0.3em 0;">Notification Preview</summary>
+                    <details id="previewToggle" style="margin-top: 1em; margin-bottom: 1em;">
+                        <summary style="cursor: pointer; font-size: 1.1em; font-weight: 600; user-select: none; padding: 0.3em 0; opacity: 0.85;">Notification Preview</summary>
 
                         <div style="margin-top: 0.75em;">
                             <div class="selectContainer">
@@ -129,33 +145,39 @@
                             </div>
                         </div>
 
-                    <div id="discordPreview" style="background: #313338; border-radius: 8px; padding: 16px 16px 16px 72px; position: relative; font-family: 'gg sans', 'Noto Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 16px; color: #dbdee1; margin: 1em 0 2em 0; min-height: 80px; line-height: 1.375;">
-                        <!-- Avatar -->
-                        <div id="previewAvatar" style="position: absolute; left: 16px; top: 16px; width: 40px; height: 40px; border-radius: 50%; background: #5865f2; overflow: hidden; display: flex; align-items: center; justify-content: center;">
-                            <img id="previewAvatarImg" src="" alt="" style="width: 100%; height: 100%; object-fit: cover; display: none;" />
-                            <span id="previewAvatarFallback" style="color: white; font-size: 1.1em; font-weight: bold;">J</span>
-                        </div>
-                        <!-- Header -->
-                        <div style="margin-bottom: 4px;">
-                            <span id="previewBotName" style="font-weight: 600; color: #f2f3f5; cursor: pointer; font-size: 1em;"></span>
-                            <span style="background: #5865f2; color: white; font-size: 0.625em; padding: 1px 4px; border-radius: 3px; margin-left: 4px; vertical-align: middle; font-weight: 600; text-transform: uppercase;">App</span>
-                            <span id="previewTimestamp" style="color: #949ba4; font-size: 0.75em; margin-left: 8px;"></span>
-                        </div>
-                        <!-- Embed -->
-                        <div id="previewEmbed" style="background: #2b2d31; border-radius: 0 4px 4px 0; padding: 8px 16px 16px 12px; max-width: 520px; display: flex; border-left: 4px solid #9b59b6;">
-                            <div style="flex: 1; min-width: 0;">
-                                <div id="previewEmbedTitle" style="font-weight: 600; color: #00aff4; margin-bottom: 4px; font-size: 1em;"></div>
-                                <div id="previewEmbedDescription" style="color: #dbdee1; font-size: 0.875em; margin-bottom: 8px; white-space: pre-line;"></div>
-                                <div id="previewEmbedFields" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;"></div>
-                                <div id="previewEmbedFooter" style="display: flex; align-items: center; gap: 8px; margin-top: 8px; font-size: 0.75em; color: #949ba4;">
-                                    <img id="previewFooterIcon" src="" alt="" style="width: 20px; height: 20px; border-radius: 50%;" />
-                                    <span id="previewFooterText"></span>
-                                </div>
+                        <div id="discordPreview" style="background: #313338; border-radius: 8px; padding: 16px 16px 16px 72px; position: relative; font-family: 'gg sans', 'Noto Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 16px; color: #dbdee1; margin: 1em 0 1em 0; min-height: 80px; line-height: 1.375;">
+                            <!-- Avatar -->
+                            <div id="previewAvatar" style="position: absolute; left: 16px; top: 16px; width: 40px; height: 40px; border-radius: 50%; background: #5865f2; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                                <img id="previewAvatarImg" src="" alt="" style="width: 100%; height: 100%; object-fit: cover; display: none;" />
+                                <span id="previewAvatarFallback" style="color: white; font-size: 1.1em; font-weight: bold;">J</span>
                             </div>
-                            <div id="previewThumbnail" style="width: 80px; height: 112px; border-radius: 4px; margin-left: 16px; flex-shrink: 0; background: linear-gradient(135deg, #5865f2 0%, #9b59b6 100%); display: none;"></div>
+                            <!-- Header -->
+                            <div style="margin-bottom: 4px;">
+                                <span id="previewBotName" style="font-weight: 600; color: #f2f3f5; cursor: pointer; font-size: 1em;"></span>
+                                <span style="background: #5865f2; color: white; font-size: 0.625em; padding: 1px 4px; border-radius: 3px; margin-left: 4px; vertical-align: middle; font-weight: 600; text-transform: uppercase;">App</span>
+                                <span id="previewTimestamp" style="color: #949ba4; font-size: 0.75em; margin-left: 8px;"></span>
+                            </div>
+                            <!-- Embed -->
+                            <div id="previewEmbed" style="background: #2b2d31; border-radius: 0 4px 4px 0; padding: 8px 16px 16px 12px; max-width: 520px; display: flex; border-left: 4px solid #9b59b6;">
+                                <div style="flex: 1; min-width: 0;">
+                                    <div id="previewEmbedTitle" style="font-weight: 600; color: #00aff4; margin-bottom: 4px; font-size: 1em;"></div>
+                                    <div id="previewEmbedDescription" style="color: #dbdee1; font-size: 0.875em; margin-bottom: 8px; white-space: pre-line;"></div>
+                                    <div id="previewEmbedFields" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;"></div>
+                                    <div id="previewEmbedFooter" style="display: flex; align-items: center; gap: 8px; margin-top: 8px; font-size: 0.75em; color: #949ba4;">
+                                        <img id="previewFooterIcon" src="" alt="" style="width: 20px; height: 20px; border-radius: 50%;" />
+                                        <span id="previewFooterText"></span>
+                                    </div>
+                                </div>
+                                <div id="previewThumbnail" style="width: 80px; height: 112px; border-radius: 4px; margin-left: 16px; flex-shrink: 0; background: linear-gradient(135deg, #5865f2 0%, #9b59b6 100%); display: none;"></div>
+                            </div>
                         </div>
-                    </div>
                     </details>
+
+                    <!-- ═══════════════════════════════════════════ -->
+                    <!-- MEDIA NOTIFICATIONS                        -->
+                    <!-- ═══════════════════════════════════════════ -->
+
+                    <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 2em 0;" />
 
                     <div class="sectionTitleContainer flex align-items-center">
                         <h2>Media Notifications</h2>
@@ -164,21 +186,9 @@
                     <div class="checkboxContainer checkboxContainer-withDescription">
                         <label class="emby-checkbox-label">
                             <input id="ItemAddedNotifier" name="ItemAddedNotifierCheckBox" type="checkbox" is="emby-checkbox" />
-                            <span>New Content Notifier</span>
+                            <span>New Content</span>
                         </label>
-                        <div class="checkboxDescription">Send a notification when movies, series, episodes, or albums are added to the library.</div>
-                    </div>
-
-                    <div class="inputContainer">
-                        <label class="inputLabel inputLabelUnfocused" for="ItemAddedGroupingDelay">Grouping delay (minutes)</label>
-                        <input id="ItemAddedGroupingDelay" name="ItemAddedGroupingDelay" type="number" min="1" max="60" is="emby-input" />
-                        <div class="fieldDescription">Quiet window for additions made outside a library scan (e.g. real-time folder monitoring): wait this many minutes after the last episode/track of a group before sending. Additions made through a library scan are sent as soon as the scan finishes. Default: 5.</div>
-                    </div>
-
-                    <div class="inputContainer">
-                        <label class="inputLabel inputLabelUnfocused" for="ItemAddedMaxWait">Maximum grouping wait (minutes)</label>
-                        <input id="ItemAddedMaxWait" name="ItemAddedMaxWait" type="number" min="1" max="1440" is="emby-input" />
-                        <div class="fieldDescription">Upper bound on how long a group can be held: even if items keep trickling in, the notification is sent once it has waited this long. Prevents a slow download from delaying the notification forever. Default: 60.</div>
+                        <div class="checkboxDescription">Notify when movies, series, episodes, or albums are added to the library.</div>
                     </div>
 
                     <div class="checkboxList" style="padding-left: 1.5em;">
@@ -200,69 +210,102 @@
                                 <span>Music (albums &amp; tracks)</span>
                             </label>
                         </div>
-                        <div class="checkboxContainer checkboxContainer-withDescription">
+                        <div class="checkboxContainer">
                             <label class="emby-checkbox-label">
                                 <input id="ItemAddedNotifyBooks" name="ItemAddedNotifyBooksCheckBox" type="checkbox" is="emby-checkbox" />
                                 <span>Books</span>
                             </label>
-                            <div class="checkboxDescription">Choose which media types trigger a new-content notification.</div>
                         </div>
                     </div>
+
+                    <details style="margin: 0.25em 0 1em 1em; padding: 0.5em 0.75em; border-left: 3px solid #00a4dc;">
+                        <summary style="cursor: pointer; font-size: 0.9em; opacity: 0.75; user-select: none;">Grouping options</summary>
+                        <div style="margin-top: 0.5em;">
+                            <div class="inputContainer">
+                                <label class="inputLabel inputLabelUnfocused" for="ItemAddedGroupingDelay">Grouping delay (minutes)</label>
+                                <input id="ItemAddedGroupingDelay" name="ItemAddedGroupingDelay" type="number" min="1" max="60" is="emby-input" />
+                                <div class="fieldDescription">Wait this many minutes of quiet before sending grouped notifications (real-time adds only; library scans send on completion). Default: 5.</div>
+                            </div>
+                            <div class="inputContainer">
+                                <label class="inputLabel inputLabelUnfocused" for="ItemAddedMaxWait">Maximum wait (minutes)</label>
+                                <input id="ItemAddedMaxWait" name="ItemAddedMaxWait" type="number" min="1" max="1440" is="emby-input" />
+                                <div class="fieldDescription">Hard upper bound: send even if items keep trickling in. Default: 60.</div>
+                            </div>
+                        </div>
+                    </details>
 
                     <div class="checkboxContainer checkboxContainer-withDescription">
                         <label class="emby-checkbox-label">
                             <input id="ItemDeletedNotifier" name="ItemDeletedNotifierCheckBox" type="checkbox" is="emby-checkbox" />
-                            <span>Content Deleted Notifier</span>
+                            <span>Content Deleted</span>
                         </label>
-                        <div class="checkboxDescription">Send a notification when movies, series, episodes, or albums are removed from the library.</div>
+                        <div class="checkboxDescription">Notify when items are removed from the library.</div>
                     </div>
 
                     <div class="checkboxContainer checkboxContainer-withDescription">
                         <label class="emby-checkbox-label">
                             <input id="ItemUpdatedNotifier" name="ItemUpdatedNotifierCheckBox" type="checkbox" is="emby-checkbox" />
-                            <span>Content Updated Notifier</span>
+                            <span>Metadata Updated</span>
                         </label>
-                        <div class="checkboxDescription">Send a notification when metadata is refreshed for movies, series, albums or books. Can be noisy during library scans.</div>
+                        <div class="checkboxDescription">Notify when metadata is refreshed. Suppressed during library scans.</div>
                     </div>
 
                     <div class="checkboxContainer checkboxContainer-withDescription">
                         <label class="emby-checkbox-label">
                             <input id="SubtitleDownloadFailureNotifier" name="SubtitleDownloadFailureNotifierCheckBox" type="checkbox" is="emby-checkbox" />
-                            <span>Subtitle Download Failure Notifier</span>
+                            <span>Subtitle Download Failure</span>
                         </label>
-                        <div class="checkboxDescription">Send a notification when a subtitle download fails for a media item.</div>
+                        <div class="checkboxDescription">Notify when a subtitle download fails.</div>
                     </div>
 
                     <div class="checkboxContainer checkboxContainer-withDescription">
                         <label class="emby-checkbox-label">
                             <input id="LyricDownloadFailureNotifier" name="LyricDownloadFailureNotifierCheckBox" type="checkbox" is="emby-checkbox" />
-                            <span>Lyric Download Failure Notifier</span>
+                            <span>Lyric Download Failure</span>
                         </label>
-                        <div class="checkboxDescription">Send a notification when a lyric download fails for a media item.</div>
+                        <div class="checkboxDescription">Notify when a lyric download fails.</div>
                     </div>
 
                     <div class="checkboxContainer checkboxContainer-withDescription">
                         <label class="emby-checkbox-label">
                             <input id="UserDataSavedNotifier" name="UserDataSavedNotifierCheckBox" type="checkbox" is="emby-checkbox" />
-                            <span>Watch Status Notifier</span>
+                            <span>Watch Status Changes</span>
                         </label>
-                        <div class="checkboxDescription">Send a notification when a user marks content as watched/unwatched or rates it.</div>
+                        <div class="checkboxDescription">Notify when a user marks content as watched/unwatched or rates it.</div>
+                    </div>
+
+                    <!-- ═══════════════════════════════════════════ -->
+                    <!-- PLAYBACK NOTIFICATIONS                     -->
+                    <!-- ═══════════════════════════════════════════ -->
+
+                    <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 2em 0;" />
+
+                    <div class="sectionTitleContainer flex align-items-center">
+                        <h2>Playback Notifications</h2>
                     </div>
 
                     <div class="checkboxContainer checkboxContainer-withDescription">
                         <label class="emby-checkbox-label">
                             <input id="PlaybackStartNotifier" name="PlaybackStartNotifierCheckBox" type="checkbox" is="emby-checkbox" />
-                            <span>Playback Start Notifier</span>
+                            <span>Playback Start</span>
                         </label>
-                        <div class="checkboxDescription">Send a notification when a playback session starts.</div>
+                        <div class="checkboxDescription">Notify when a playback session starts.</div>
                     </div>
 
                     <div class="checkboxContainer checkboxContainer-withDescription">
                         <label class="emby-checkbox-label">
                             <input id="PlaybackStopNotifier" name="PlaybackStopNotifierCheckBox" type="checkbox" is="emby-checkbox" />
-                            <span>Playback Stop Notifier</span>
+                            <span>Playback Stop</span>
                         </label>
-                        <div class="checkboxDescription">Send a notification when a session stops, with progress and completion status.</div>
+                        <div class="checkboxDescription">Notify when playback stops, with progress and completion status.</div>
+                    </div>
+
+                    <div class="checkboxContainer checkboxContainer-withDescription">
+                        <label class="emby-checkbox-label">
+                            <input id="PlaybackProgressNotifier" name="PlaybackProgressNotifierCheckBox" type="checkbox" is="emby-checkbox" />
+                            <span>Playback Progress</span>
+                        </label>
+                        <div class="checkboxDescription">Periodic progress updates during active playback.</div>
                     </div>
 
                     <details style="margin: 0.25em 0 1em 1em; padding: 0.5em 0.75em; border-left: 3px solid #00a4dc;">
@@ -273,7 +316,7 @@
                                     <input id="PlaybackNotifyMovies" name="PlaybackNotifyMoviesCheckBox" type="checkbox" is="emby-checkbox" />
                                     <span>Movies</span>
                                 </label>
-                                <div class="checkboxDescription">Send playback notifications for movies.</div>
+                                <div class="checkboxDescription">Include movies in playback notifications.</div>
                             </div>
 
                             <div class="checkboxContainer checkboxContainer-withDescription">
@@ -281,7 +324,7 @@
                                     <input id="PlaybackNotifySeries" name="PlaybackNotifySeriesCheckBox" type="checkbox" is="emby-checkbox" />
                                     <span>Series</span>
                                 </label>
-                                <div class="checkboxDescription">Send playback notifications for series episodes.</div>
+                                <div class="checkboxDescription">Include series episodes in playback notifications.</div>
                             </div>
 
                             <div class="checkboxContainer checkboxContainer-withDescription">
@@ -289,92 +332,94 @@
                                     <input id="PlaybackDetailedMode" name="PlaybackDetailedModeCheckBox" type="checkbox" is="emby-checkbox" />
                                     <span>Detailed mode</span>
                                 </label>
-                                <div class="checkboxDescription">Show codec info, client, device and transcode reasons on playback start notifications. When off, a simple notification is sent.</div>
+                                <div class="checkboxDescription">Show codec, client, device and transcode reasons on playback start.</div>
                             </div>
 
-                            <div class="checkboxContainer checkboxContainer-withDescription" style="padding-left: 1.5em;">
+                            <div class="checkboxContainer checkboxContainer-withDescription">
                                 <label class="emby-checkbox-label">
                                     <input id="PlaybackTranscodeOnlyNotifier" name="PlaybackTranscodeOnlyNotifierCheckBox" type="checkbox" is="emby-checkbox" />
-                                    <span>Transcoding / remux sessions only</span>
+                                    <span>Transcoding / remux only</span>
                                 </label>
-                                <div class="checkboxDescription">Only notify when the server is not Direct Playing (transcode or remux on the fly).</div>
+                                <div class="checkboxDescription">Only notify when the server is transcoding or remuxing (not Direct Play).</div>
+                            </div>
+
+                            <div class="inputContainer">
+                                <label class="inputLabel inputLabelUnfocused" for="PlaybackProgressInterval">Progress interval (minutes)</label>
+                                <input id="PlaybackProgressInterval" name="PlaybackProgressInterval" type="number" min="1" max="120" is="emby-input" />
+                                <div class="fieldDescription">How often to send progress updates per session. Default: 10.</div>
                             </div>
                         </div>
                     </details>
 
-                    <div class="checkboxContainer checkboxContainer-withDescription" style="margin-top: 0.5em;">
-                        <label class="emby-checkbox-label">
-                            <input id="PlaybackProgressNotifier" name="PlaybackProgressNotifierCheckBox" type="checkbox" is="emby-checkbox" />
-                            <span>Playback Progress Notifier</span>
-                        </label>
-                        <div class="checkboxDescription">Send a notification at a regular interval during an active playback session (movies and series only).</div>
-                    </div>
+                    <!-- ═══════════════════════════════════════════ -->
+                    <!-- USERS & SECURITY                           -->
+                    <!-- ═══════════════════════════════════════════ -->
 
-                    <div class="inputContainer">
-                        <label class="inputLabel inputLabelUnfocused" for="PlaybackProgressInterval">Progress notification interval (minutes)</label>
-                        <input id="PlaybackProgressInterval" name="PlaybackProgressInterval" type="number" min="1" max="120" is="emby-input" />
-                        <div class="fieldDescription">How often (in minutes) to send a progress notification per session. Default: 10.</div>
-                    </div>
+                    <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 2em 0;" />
 
                     <div class="sectionTitleContainer flex align-items-center">
-                        <h2>Security &amp; User Notifications</h2>
+                        <h2>Users &amp; Security</h2>
                     </div>
 
                     <div class="checkboxContainer checkboxContainer-withDescription">
                         <label class="emby-checkbox-label">
                             <input id="UserCreatedNotifier" name="UserCreatedNotifierCheckBox" type="checkbox" is="emby-checkbox" />
-                            <span>User Created Notifier</span>
+                            <span>User Created</span>
                         </label>
-                        <div class="checkboxDescription">Send a notification when a new user account is created on the server.</div>
+                        <div class="checkboxDescription">Notify when a new user account is created.</div>
                     </div>
 
                     <div class="checkboxContainer checkboxContainer-withDescription">
                         <label class="emby-checkbox-label">
                             <input id="UserDeletedNotifier" name="UserDeletedNotifierCheckBox" type="checkbox" is="emby-checkbox" />
-                            <span>User Deleted Notifier</span>
+                            <span>User Deleted</span>
                         </label>
-                        <div class="checkboxDescription">Send a notification when a user account is deleted from the server.</div>
-                    </div>
-
-                    <div class="checkboxContainer checkboxContainer-withDescription">
-                        <label class="emby-checkbox-label">
-                            <input id="AuthenticationSuccessNotifier" name="AuthenticationSuccessNotifierCheckBox" type="checkbox" is="emby-checkbox" />
-                            <span>Login Success Notifier</span>
-                        </label>
-                        <div class="checkboxDescription">Send a notification when a user successfully logs in.</div>
-                    </div>
-
-                    <div class="checkboxContainer checkboxContainer-withDescription">
-                        <label class="emby-checkbox-label">
-                            <input id="AuthenticationFailureNotifier" name="AuthenticationFailureNotifierCheckBox" type="checkbox" is="emby-checkbox" />
-                            <span>Login Failure Notifier</span>
-                        </label>
-                        <div class="checkboxDescription">Send a notification when a login attempt fails. Note: only fires for wrong passwords on existing accounts; unknown usernames do not trigger this event.</div>
-                    </div>
-
-                    <div class="checkboxContainer checkboxContainer-withDescription">
-                        <label class="emby-checkbox-label">
-                            <input id="UserLockedOutNotifier" name="UserLockedOutNotifierCheckBox" type="checkbox" is="emby-checkbox" />
-                            <span>User Locked Out Notifier</span>
-                        </label>
-                        <div class="checkboxDescription">Send a notification when a user account is locked after too many failed login attempts.</div>
-                    </div>
-
-                    <div class="checkboxContainer checkboxContainer-withDescription">
-                        <label class="emby-checkbox-label">
-                            <input id="UserPasswordChangedNotifier" name="UserPasswordChangedNotifierCheckBox" type="checkbox" is="emby-checkbox" />
-                            <span>Password Changed Notifier</span>
-                        </label>
-                        <div class="checkboxDescription">Send a notification when a user changes their password.</div>
+                        <div class="checkboxDescription">Notify when a user account is deleted.</div>
                     </div>
 
                     <div class="checkboxContainer checkboxContainer-withDescription">
                         <label class="emby-checkbox-label">
                             <input id="UserUpdatedNotifier" name="UserUpdatedNotifierCheckBox" type="checkbox" is="emby-checkbox" />
-                            <span>User Updated Notifier</span>
+                            <span>User Updated</span>
                         </label>
-                        <div class="checkboxDescription">Send a notification when a user account is renamed. Does not trigger on permission or policy changes.</div>
+                        <div class="checkboxDescription">Notify when a user account is renamed. Does not trigger on permission changes.</div>
                     </div>
+
+                    <div class="checkboxContainer checkboxContainer-withDescription">
+                        <label class="emby-checkbox-label">
+                            <input id="UserPasswordChangedNotifier" name="UserPasswordChangedNotifierCheckBox" type="checkbox" is="emby-checkbox" />
+                            <span>Password Changed</span>
+                        </label>
+                        <div class="checkboxDescription">Notify when a user changes their password.</div>
+                    </div>
+
+                    <hr style="border: none; border-top: 1px dashed rgba(255,255,255,0.06); margin: 1em 0;" />
+
+                    <div class="checkboxContainer checkboxContainer-withDescription">
+                        <label class="emby-checkbox-label">
+                            <input id="AuthenticationSuccessNotifier" name="AuthenticationSuccessNotifierCheckBox" type="checkbox" is="emby-checkbox" />
+                            <span>Login Success</span>
+                        </label>
+                        <div class="checkboxDescription">Notify when a user successfully logs in.</div>
+                    </div>
+
+                    <div class="checkboxContainer checkboxContainer-withDescription">
+                        <label class="emby-checkbox-label">
+                            <input id="AuthenticationFailureNotifier" name="AuthenticationFailureNotifierCheckBox" type="checkbox" is="emby-checkbox" />
+                            <span>Login Failure</span>
+                        </label>
+                        <div class="checkboxDescription">Notify on failed login attempts. Only fires for wrong passwords on existing accounts.</div>
+                    </div>
+
+                    <div class="checkboxContainer checkboxContainer-withDescription">
+                        <label class="emby-checkbox-label">
+                            <input id="UserLockedOutNotifier" name="UserLockedOutNotifierCheckBox" type="checkbox" is="emby-checkbox" />
+                            <span>User Locked Out</span>
+                        </label>
+                        <div class="checkboxDescription">Notify when an account is locked after too many failed attempts.</div>
+                    </div>
+
+                    <hr style="border: none; border-top: 1px dashed rgba(255,255,255,0.06); margin: 1em 0;" />
 
                     <div class="checkboxContainer checkboxContainer-withDescription">
                         <label class="emby-checkbox-label">
@@ -384,6 +429,12 @@
                         <div class="checkboxDescription">Show client IP addresses in login and session notifications. Disabled by default for privacy (GDPR).</div>
                     </div>
 
+                    <!-- ═══════════════════════════════════════════ -->
+                    <!-- SERVER NOTIFICATIONS                       -->
+                    <!-- ═══════════════════════════════════════════ -->
+
+                    <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 2em 0;" />
+
                     <div class="sectionTitleContainer flex align-items-center">
                         <h2>Server Notifications</h2>
                     </div>
@@ -391,25 +442,45 @@
                     <div class="checkboxContainer checkboxContainer-withDescription">
                         <label class="emby-checkbox-label">
                             <input id="SessionStartNotifier" name="SessionStartNotifierCheckBox" type="checkbox" is="emby-checkbox" />
-                            <span>Session Start Notifier</span>
+                            <span>Session Start</span>
                         </label>
-                        <div class="checkboxDescription">Send a notification when a client opens a new session on the server.</div>
+                        <div class="checkboxDescription">Notify when a client opens a new session.</div>
                     </div>
 
                     <div class="checkboxContainer checkboxContainer-withDescription">
                         <label class="emby-checkbox-label">
                             <input id="SessionEndedNotifier" name="SessionEndedNotifierCheckBox" type="checkbox" is="emby-checkbox" />
-                            <span>Session Ended Notifier</span>
+                            <span>Session Ended</span>
                         </label>
-                        <div class="checkboxDescription">Send a notification when a client session closes.</div>
+                        <div class="checkboxDescription">Notify when a client session closes.</div>
+                    </div>
+
+                    <hr style="border: none; border-top: 1px dashed rgba(255,255,255,0.06); margin: 1em 0;" />
+
+                    <div class="checkboxContainer checkboxContainer-withDescription">
+                        <label class="emby-checkbox-label">
+                            <input id="ServerStartedNotifier" name="ServerStartedNotifierCheckBox" type="checkbox" is="emby-checkbox" />
+                            <span>Server Started</span>
+                        </label>
+                        <div class="checkboxDescription">Notify when the Jellyfin server starts or restarts.</div>
                     </div>
 
                     <div class="checkboxContainer checkboxContainer-withDescription">
                         <label class="emby-checkbox-label">
-                            <input id="TaskCompletedNotifier" name="TaskCompletedNotifierCheckBox" type="checkbox" is="emby-checkbox" />
-                            <span>Task Completed Notifier</span>
+                            <input id="PendingRestartNotifier" name="PendingRestartNotifierCheckBox" type="checkbox" is="emby-checkbox" />
+                            <span>Pending Restart</span>
                         </label>
-                        <div class="checkboxDescription">Send a notification when a scheduled task finishes (library scan, backup, etc.).</div>
+                        <div class="checkboxDescription">Notify when the server requires a restart to apply changes.</div>
+                    </div>
+
+                    <hr style="border: none; border-top: 1px dashed rgba(255,255,255,0.06); margin: 1em 0;" />
+
+                    <div class="checkboxContainer checkboxContainer-withDescription">
+                        <label class="emby-checkbox-label">
+                            <input id="TaskCompletedNotifier" name="TaskCompletedNotifierCheckBox" type="checkbox" is="emby-checkbox" />
+                            <span>Task Completed</span>
+                        </label>
+                        <div class="checkboxDescription">Notify when a scheduled task finishes (library scan, backup, etc.).</div>
                     </div>
 
                     <div class="checkboxContainer checkboxContainer-withDescription" style="padding-left: 1.5em;">
@@ -417,77 +488,70 @@
                             <input id="TaskCompletedOnlyOnFailure" name="TaskCompletedOnlyOnFailureCheckBox" type="checkbox" is="emby-checkbox" />
                             <span>Only on failure</span>
                         </label>
-                        <div class="checkboxDescription">Only send task notifications when a task fails or is aborted. Reduces noise from the ~15 scheduled tasks that run daily.</div>
+                        <div class="checkboxDescription">Only send when a task fails or is aborted. Reduces noise from ~15 daily tasks.</div>
+                    </div>
+
+                    <!-- ═══════════════════════════════════════════ -->
+                    <!-- PLUGIN EVENTS                              -->
+                    <!-- ═══════════════════════════════════════════ -->
+
+                    <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 2em 0;" />
+
+                    <div class="sectionTitleContainer flex align-items-center">
+                        <h2>Plugin Events</h2>
                     </div>
 
                     <div class="checkboxContainer checkboxContainer-withDescription">
                         <label class="emby-checkbox-label">
-                            <input id="PendingRestartNotifier" name="PendingRestartNotifierCheckBox" type="checkbox" is="emby-checkbox" />
-                            <span>Pending Restart Notifier</span>
+                            <input id="PluginInstalledNotifier" name="PluginInstalledNotifierCheckBox" type="checkbox" is="emby-checkbox" />
+                            <span>Plugin Installed</span>
                         </label>
-                        <div class="checkboxDescription">Send a notification when the server requires a restart to apply pending changes.</div>
+                        <div class="checkboxDescription">Notify when a plugin is installed.</div>
                     </div>
 
                     <div class="checkboxContainer checkboxContainer-withDescription">
                         <label class="emby-checkbox-label">
-                            <input id="ServerStartedNotifier" name="ServerStartedNotifierCheckBox" type="checkbox" is="emby-checkbox" />
-                            <span>Server Started Notifier</span>
+                            <input id="PluginUpdatedNotifier" name="PluginUpdatedNotifierCheckBox" type="checkbox" is="emby-checkbox" />
+                            <span>Plugin Updated</span>
                         </label>
-                        <div class="checkboxDescription">Send a notification when the Jellyfin server starts or restarts.</div>
+                        <div class="checkboxDescription">Notify when a plugin is updated.</div>
                     </div>
 
-                    <details style="margin: 0.25em 0 1em 1em; padding: 0.5em 0.75em; border-left: 3px solid #00a4dc;">
-                        <summary style="cursor: pointer; font-size: 0.9em; opacity: 0.75; user-select: none;">Plugin events</summary>
-                        <div style="margin-top: 0.5em;">
-                            <div class="checkboxContainer checkboxContainer-withDescription">
-                                <label class="emby-checkbox-label">
-                                    <input id="PluginInstalledNotifier" name="PluginInstalledNotifierCheckBox" type="checkbox" is="emby-checkbox" />
-                                    <span>Plugin Installed</span>
-                                </label>
-                                <div class="checkboxDescription">Send a notification when a plugin is successfully installed.</div>
-                            </div>
+                    <div class="checkboxContainer checkboxContainer-withDescription">
+                        <label class="emby-checkbox-label">
+                            <input id="PluginUninstalledNotifier" name="PluginUninstalledNotifierCheckBox" type="checkbox" is="emby-checkbox" />
+                            <span>Plugin Uninstalled</span>
+                        </label>
+                        <div class="checkboxDescription">Notify when a plugin is removed.</div>
+                    </div>
 
-                            <div class="checkboxContainer checkboxContainer-withDescription">
-                                <label class="emby-checkbox-label">
-                                    <input id="PluginUpdatedNotifier" name="PluginUpdatedNotifierCheckBox" type="checkbox" is="emby-checkbox" />
-                                    <span>Plugin Updated</span>
-                                </label>
-                                <div class="checkboxDescription">Send a notification when a plugin is updated to a new version.</div>
-                            </div>
+                    <div class="checkboxContainer checkboxContainer-withDescription">
+                        <label class="emby-checkbox-label">
+                            <input id="PluginInstallationFailedNotifier" name="PluginInstallationFailedNotifierCheckBox" type="checkbox" is="emby-checkbox" />
+                            <span>Plugin Installation Failed</span>
+                        </label>
+                        <div class="checkboxDescription">Notify when a plugin installation fails.</div>
+                    </div>
 
-                            <div class="checkboxContainer checkboxContainer-withDescription">
-                                <label class="emby-checkbox-label">
-                                    <input id="PluginUninstalledNotifier" name="PluginUninstalledNotifierCheckBox" type="checkbox" is="emby-checkbox" />
-                                    <span>Plugin Uninstalled</span>
-                                </label>
-                                <div class="checkboxDescription">Send a notification when a plugin is removed from the server.</div>
-                            </div>
+                    <div class="checkboxContainer checkboxContainer-withDescription">
+                        <label class="emby-checkbox-label">
+                            <input id="PluginInstallationCancelledNotifier" name="PluginInstallationCancelledNotifierCheckBox" type="checkbox" is="emby-checkbox" />
+                            <span>Plugin Installation Cancelled</span>
+                        </label>
+                        <div class="checkboxDescription">Notify when a plugin installation is cancelled.</div>
+                    </div>
 
-                            <div class="checkboxContainer checkboxContainer-withDescription">
-                                <label class="emby-checkbox-label">
-                                    <input id="PluginInstallationFailedNotifier" name="PluginInstallationFailedNotifierCheckBox" type="checkbox" is="emby-checkbox" />
-                                    <span>Plugin Installation Failed</span>
-                                </label>
-                                <div class="checkboxDescription">Send a notification when a plugin installation fails.</div>
-                            </div>
+                    <div class="checkboxContainer checkboxContainer-withDescription">
+                        <label class="emby-checkbox-label">
+                            <input id="PluginInstallingNotifier" name="PluginInstallingNotifierCheckBox" type="checkbox" is="emby-checkbox" />
+                            <span>Plugin Installing</span>
+                        </label>
+                        <div class="checkboxDescription">Notify when a plugin installation begins.</div>
+                    </div>
 
-                            <div class="checkboxContainer checkboxContainer-withDescription">
-                                <label class="emby-checkbox-label">
-                                    <input id="PluginInstallationCancelledNotifier" name="PluginInstallationCancelledNotifierCheckBox" type="checkbox" is="emby-checkbox" />
-                                    <span>Plugin Installation Cancelled</span>
-                                </label>
-                                <div class="checkboxDescription">Send a notification when a plugin installation is cancelled.</div>
-                            </div>
+                    <!-- ═══════════════════════════════════════════ -->
 
-                            <div class="checkboxContainer checkboxContainer-withDescription">
-                                <label class="emby-checkbox-label">
-                                    <input id="PluginInstallingNotifier" name="PluginInstallingNotifierCheckBox" type="checkbox" is="emby-checkbox" />
-                                    <span>Plugin Installing</span>
-                                </label>
-                                <div class="checkboxDescription">Send a notification when a plugin installation begins.</div>
-                            </div>
-                        </div>
-                    </details>
+                    <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 2em 0;" />
 
                     <div>
                         <button id="saveButton" is="emby-button" type="submit" class="raised block emby-button">
