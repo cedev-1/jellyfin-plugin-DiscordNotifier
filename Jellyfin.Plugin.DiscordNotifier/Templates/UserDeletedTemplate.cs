@@ -27,13 +27,13 @@ namespace Jellyfin.Plugin.DiscordNotifier.Templates
                 [
                     new DiscordEmbed
                     {
-                        Title = "🪼 User Deleted",
+                        Title = "User Deleted",
                         Description = "An account has been removed from the server.",
                         Url = $"{serverUrl}/web/#/dashboard/users",
                         Color = 0xE74C3C,
                         Fields =
                         [
-                            new DiscordEmbedField { Name = "Username", Value = eventArgs.Argument.Username, Inline = true },
+                            new DiscordEmbedField { Name = "Username", Value = DiscordText.Safe(eventArgs.Argument.Username), Inline = true },
                             new DiscordEmbedField { Name = "User ID", Value = eventArgs.Argument.Id.ToString(), Inline = true }
                         ],
                         Footer = DiscordEmbedFooter.FromConfig(config),

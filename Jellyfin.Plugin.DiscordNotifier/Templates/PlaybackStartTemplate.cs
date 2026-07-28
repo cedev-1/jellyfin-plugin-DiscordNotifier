@@ -33,12 +33,12 @@ public static class PlaybackStartTemplate
         var positionTicks = session?.PlayState?.PositionTicks;
         var runtimeTicks = item?.RunTimeTicks;
 
-        var userName = session?.UserName ?? "Unknown";
+        var userName = DiscordText.Safe(session?.UserName);
         var isResuming = positionTicks.HasValue && positionTicks.Value > 0;
         var action = isResuming ? "Playback Resumed" : "Playback Started";
 
-        var authorName = BuildAuthorName(action, item);
-        var authorUrl = item is not null ? $"{serverUrl}/web/index.html#!/details?id={item.Id}" : null;
+        var authorName = DiscordText.Truncate(BuildAuthorName(action, item), 256);
+        var authorUrl = item is not null ? $"{serverUrl}/web/#/details?id={item.Id}" : null;
 
         var overview = item?.Overview;
         var progressBar = PlaybackUtils.BuildProgressBar(positionTicks ?? 0, runtimeTicks);
@@ -72,8 +72,8 @@ public static class PlaybackStartTemplate
         var fields = new List<DiscordEmbedField>
         {
             new() { Name = "Play Method", Value = playMethod?.ToString() ?? "Unknown", Inline = true },
-            new() { Name = "Device", Value = session?.DeviceName ?? "Unknown", Inline = true },
-            new() { Name = "Client", Value = session?.Client ?? "Unknown", Inline = true }
+            new() { Name = "Device", Value = DiscordText.Safe(session?.DeviceName), Inline = true },
+            new() { Name = "Client", Value = DiscordText.Safe(session?.Client), Inline = true }
         };
 
         if (isTranscoding && session?.TranscodingInfo is { } info)
@@ -93,7 +93,7 @@ public static class PlaybackStartTemplate
                 var reasonText = string.Join(", ", Array.ConvertAll(
                     info.TranscodeReasons.ToString().Split(','),
                     part => SplitCamelCase(part.Trim())));
-                fields.Add(new DiscordEmbedField { Name = "Transcode Reasons", Value = reasonText, Inline = false });
+                fields.Add(new DiscordEmbedField { Name = "Transcode Reasons", Value = DiscordText.Truncate(reasonText, 1024), Inline = false });
             }
         }
 
@@ -140,7 +140,7 @@ public static class PlaybackStartTemplate
 
         if (!string.IsNullOrWhiteSpace(overview))
         {
-            var truncated = overview.Length > 300 ? overview[..300] + "…" : overview;
+            var truncated = DiscordText.Truncate(overview, 300);
             lines.Add($"> {truncated}");
         }
 

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Jellyfin.Plugin.DiscordNotifier.Configuration;
 using Jellyfin.Plugin.DiscordNotifier.Models;
 using Jellyfin.Plugin.DiscordNotifier.Utils;
@@ -21,21 +22,27 @@ public static class AuthenticationFailureTemplate
     {
         string serverUrl = ServerUrlHelper.GetServerUrl(config);
 
+        var fields = new List<DiscordEmbedField>
+        {
+            new() { Name = "Device", Value = DiscordText.Safe(eventArgs.DeviceName), Inline = true }
+        };
+
+        if (config.IncludeIpAddresses)
+        {
+            fields.Insert(0, new DiscordEmbedField { Name = "IP Address", Value = DiscordText.Safe(eventArgs.RemoteEndPoint), Inline = true });
+        }
+
         return new DiscordWebhookPayload
         {
             Embeds =
             [
                 new DiscordEmbed
                 {
-                    Title = "🪼 Login Failed",
-                    Description = $"Failed login attempt for user **{eventArgs.Username}**.",
-                    Url = $"{serverUrl}/web/index.html#!/dashboard/users",
+                    Title = "Login Failed",
+                    Description = $"Failed login attempt for user **{DiscordText.Safe(eventArgs.Username)}**.",
+                    Url = $"{serverUrl}/web/#/dashboard/users",
                     Color = 0xE74C3C,
-                    Fields =
-                    [
-                        new DiscordEmbedField { Name = "IP Address", Value = eventArgs.RemoteEndPoint ?? "Unknown", Inline = true },
-                        new DiscordEmbedField { Name = "Device", Value = eventArgs.DeviceName ?? "Unknown", Inline = true }
-                    ],
+                    Fields = fields.ToArray(),
                     Footer = DiscordEmbedFooter.FromConfig(config),
                     Timestamp = DateTime.UtcNow.ToString("o")
                 }

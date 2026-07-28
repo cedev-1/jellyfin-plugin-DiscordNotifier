@@ -1,4 +1,3 @@
-using System.Text.Json;
 using Jellyfin.Data.Events.Users;
 using MediaBrowser.Controller.Events;
 using Jellyfin.Plugin.DiscordNotifier.Templates;
@@ -32,8 +31,6 @@ public class UserCreatedNotifier : IEventConsumer<UserCreatedEventArgs>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     public async Task OnEvent(UserCreatedEventArgs eventArgs)
     {
-        ArgumentNullException.ThrowIfNull(eventArgs);
-
         var config = Plugin.Config;
         var webhookUrl = config.WebhookUrl;
         if (string.IsNullOrWhiteSpace(webhookUrl))
@@ -54,12 +51,18 @@ public class UserCreatedNotifier : IEventConsumer<UserCreatedEventArgs>
             return;
         }
 
-        _logger.LogInformation("UserCreatedNotifier: User created event received for user {Username}", eventArgs.Argument.Username);
+        try
+        {
+            _logger.LogInformation("UserCreatedNotifier: User created event received for user {Username}", eventArgs.Argument.Username);
 
-        var messageObject = UserCreatedTemplate.CreateMessage(eventArgs, config);
-        var jsonMessage = JsonSerializer.Serialize(messageObject);
+            var messageObject = UserCreatedTemplate.CreateMessage(eventArgs, config);
 
-        _logger.LogInformation("UserCreatedNotifier: Sending message to Discord");
-        await _sender.SendPostToWebhook(webhookUrl, jsonMessage).ConfigureAwait(false);
+            _logger.LogInformation("UserCreatedNotifier: Sending message to Discord");
+            await _sender.SendPostToWebhook(webhookUrl, messageObject).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "UserCreatedNotifier: Error sending notification");
+        }
     }
 }
