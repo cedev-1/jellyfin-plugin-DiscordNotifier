@@ -14,8 +14,8 @@ namespace Jellyfin.Plugin.DiscordNotifier.Configuration
         {
             EnablePlugin = true;
             WebhookUrl = string.Empty;
-            WebhookUsername = string.Empty;
-            WebhookAvatarUrl = string.Empty;
+            WebhookUsername = "Jellyfin Notifier";
+            WebhookAvatarUrl = "https://raw.githubusercontent.com/cedev-1/Jellyfin-Plugin-DiscordNotifier/main/media/banner.png";
             ServerUrl = string.Empty;
             ServerName = string.Empty;
             UserCreatedNotifier = true;
