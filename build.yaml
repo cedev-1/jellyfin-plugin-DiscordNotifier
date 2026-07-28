@@ -14,8 +14,14 @@ category: "Notifications"
 artifacts:
   - "Jellyfin.Plugin.DiscordNotifier/bin/Release/net9.0/Jellyfin.Plugin.DiscordNotifier.dll"
 changelog: |
-  - Security: admin-only test endpoint, webhook URL not logged, markdown injection prevention
-  - Fix: 4 notifiers converted to IHostedService (TaskCompleted, PendingRestart, SubtitleFailure, LyricFailure)
-  - Fix: Episode grouping with stable keys, Series/MusicAlbum not filtered as Folder
-  - Feature: IP address privacy toggle (GDPR), rate-limit retry, anti-spam debouncing
-  - Polish: consistent Discord embed formatting, burst caps, scan-aware suppression
+  - New: 21 additional notifiers (27 total) — media, playback, sessions, server, plugins, user data
+  - New: webhook branding — custom bot display name and avatar URL
+  - New: collapsible notification preview with Discord-styled embeds for all events
+  - New: plugin added to admin dashboard navbar
+  - New: centralized webhook serialization with automatic branding injection
+  - Fix: Discord "username cannot contain discord" guard with frontend warning
+  - Fix: episode grouping with stable keys, Series/MusicAlbum not filtered as Folder
+  - Security: admin-only test endpoint, webhook URL excluded from logs, markdown injection prevention
+  - Privacy: GDPR toggle to hide IP addresses from login/session notifications
+  - Improvement: anti-spam debouncing, burst caps, scan-aware suppression, rate-limit retry
+  - UI: config page reorganized with section separators and collapsible advanced options
