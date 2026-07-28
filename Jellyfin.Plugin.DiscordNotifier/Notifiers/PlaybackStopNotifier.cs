@@ -1,8 +1,9 @@
-using System.Text.Json;
+using System;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.DiscordNotifier.Templates;
 using MediaBrowser.Controller.Events;
 using MediaBrowser.Controller.Library;
+using MediaBrowser.Model.Session;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.DiscordNotifier.Notifiers;
@@ -59,14 +60,29 @@ public class PlaybackStopNotifier : IEventConsumer<PlaybackStopEventArgs>
             return;
         }
 
-        _logger.LogInformation(
-            "PlaybackStopNotifier: {UserName} stopped playback of {ItemName} (completed: {Completed})",
-            eventArgs.Session?.UserName ?? "Unknown",
-            eventArgs.Item.Name,
-            eventArgs.PlayedToCompletion);
+        if (config.PlaybackTranscodeOnlyNotifier)
+        {
+            var playMethod = eventArgs.Session?.PlayState?.PlayMethod;
+            if (playMethod is not (PlayMethod.Transcode or PlayMethod.DirectStream))
+            {
+                return;
+            }
+        }
 
-        var message = PlaybackStopTemplate.CreateMessage(eventArgs, config);
-        var json = JsonSerializer.Serialize(message);
-        await _sender.SendPostToWebhook(config.WebhookUrl, json).ConfigureAwait(false);
+        try
+        {
+            _logger.LogInformation(
+                "PlaybackStopNotifier: {UserName} stopped playback of {ItemName} (completed: {Completed})",
+                eventArgs.Session?.UserName ?? "Unknown",
+                eventArgs.Item.Name,
+                eventArgs.PlayedToCompletion);
+
+            var message = PlaybackStopTemplate.CreateMessage(eventArgs, config);
+            await _sender.SendPostToWebhook(config.WebhookUrl, message).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "PlaybackStopNotifier: Error sending notification");
+        }
     }
 }

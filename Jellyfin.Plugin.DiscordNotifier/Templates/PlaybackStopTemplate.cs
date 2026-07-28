@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using Jellyfin.Plugin.DiscordNotifier.Configuration;
 using Jellyfin.Plugin.DiscordNotifier.Models;
@@ -28,7 +29,7 @@ public static class PlaybackStopTemplate
         var positionTicks = eventArgs.PlaybackPositionTicks;
         var runtimeTicks = item?.RunTimeTicks;
 
-        var userName = session?.UserName ?? "Unknown";
+        var userName = DiscordText.Safe(session?.UserName);
 
         var percent = positionTicks.HasValue && runtimeTicks.HasValue && runtimeTicks.Value > 0
             ? (double)positionTicks.Value / runtimeTicks.Value
@@ -37,12 +38,12 @@ public static class PlaybackStopTemplate
         var finished = eventArgs.PlayedToCompletion || percent >= 0.9;
         var action = finished ? "Finished Watching" : "Playback Stopped";
 
-        var authorName = BuildAuthorName(action, item);
-        var authorUrl = item is not null ? $"{serverUrl}/web/index.html#!/details?id={item.Id}" : null;
+        var authorName = DiscordText.Truncate(BuildAuthorName(action, item), 256);
+        var authorUrl = item is not null ? $"{serverUrl}/web/#/details?id={item.Id}" : null;
 
         var overview = item?.Overview;
         var progressBar = PlaybackUtils.BuildProgressBar(positionTicks ?? 0, runtimeTicks);
-        var description = BuildDescription(userName, overview, progressBar, finished);
+        var description = BuildDescription(userName, overview, progressBar);
 
         var thumbnail = item is not null
             ? new DiscordEmbedMedia { Url = $"{serverUrl}/Items/{item.Id}/Images/Primary" }
@@ -86,14 +87,13 @@ public static class PlaybackStopTemplate
             : $"{action} • {item.Name}";
     }
 
-    private static string BuildDescription(string userName, string? overview, string progressBar, bool finished)
+    private static string BuildDescription(string userName, string? overview, string progressBar)
     {
-        var icon = "🪼";
-        var lines = new System.Collections.Generic.List<string> { $"{icon} **{userName}**" };
+        var lines = new List<string> { $"**{userName}**" };
 
         if (!string.IsNullOrWhiteSpace(overview))
         {
-            var truncated = overview.Length > 300 ? overview[..300] + "…" : overview;
+            var truncated = DiscordText.Truncate(overview, 300);
             lines.Add($"> {truncated}");
         }
 

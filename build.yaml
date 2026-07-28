@@ -1,0 +1,21 @@
+---
+name: "Discord Notifier"
+guid: "8f3c85d3-19cf-4e50-a57e-7d2ce3c0c413"
+version: "1.8.0.0"
+targetAbi: "10.11.0.0"
+framework: "net9.0"
+overview: "Sends configurable Discord webhook notifications for media, user, playback, and server events."
+description: >
+  A Jellyfin plugin that sends Discord webhook notifications for library changes
+  (new content, deletions, metadata updates), playback events (start, stop, progress),
+  user management (creation, deletion, login, lockout), server lifecycle (start,
+  restart required, task completion), and plugin management.
+category: "Notifications"
+artifacts:
+  - "Jellyfin.Plugin.DiscordNotifier/bin/Release/net9.0/Jellyfin.Plugin.DiscordNotifier.dll"
+changelog: |
+  - Security: admin-only test endpoint, webhook URL not logged, markdown injection prevention
+  - Fix: 4 notifiers converted to IHostedService (TaskCompleted, PendingRestart, SubtitleFailure, LyricFailure)
+  - Fix: Episode grouping with stable keys, Series/MusicAlbum not filtered as Folder
+  - Feature: IP address privacy toggle (GDPR), rate-limit retry, anti-spam debouncing
+  - Polish: consistent Discord embed formatting, burst caps, scan-aware suppression

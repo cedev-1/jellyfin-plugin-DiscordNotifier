@@ -11,6 +11,16 @@ namespace Jellyfin.Plugin.DiscordNotifier.Models;
 /// </summary>
 public sealed class DiscordWebhookPayload
 {
+    /// <summary>Gets or sets the webhook bot display name override.</summary>
+    [JsonPropertyName("username")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? Username { get; set; }
+
+    /// <summary>Gets or sets the webhook bot avatar URL override.</summary>
+    [JsonPropertyName("avatar_url")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? AvatarUrl { get; set; }
+
     /// <summary>Gets the plain text content outside the embed.</summary>
     [JsonPropertyName("content")]
     public string Content { get; init; } = string.Empty;
@@ -18,6 +28,21 @@ public sealed class DiscordWebhookPayload
     /// <summary>Gets the list of embeds.</summary>
     [JsonPropertyName("embeds")]
     public DiscordEmbed[] Embeds { get; init; } = [];
+
+    /// <summary>Gets the allowed mentions configuration. Restricts all pings by default.</summary>
+    [JsonPropertyName("allowed_mentions")]
+    public DiscordAllowedMentions AllowedMentions { get; init; } = new();
+}
+
+/// <summary>
+/// Controls which mentions are parsed in a Discord webhook message.
+/// Default: no mentions are parsed (blocks @everyone, @here, role and user pings).
+/// </summary>
+public sealed class DiscordAllowedMentions
+{
+    /// <summary>Gets the list of mention types to parse (empty = none).</summary>
+    [JsonPropertyName("parse")]
+    public string[] Parse { get; init; } = [];
 }
 
 /// <summary>
@@ -31,6 +56,7 @@ public sealed class DiscordEmbedAuthor
 
     /// <summary>Gets the URL that the author name links to.</summary>
     [JsonPropertyName("url")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string? Url { get; init; }
 }
 
@@ -41,18 +67,22 @@ public sealed class DiscordEmbed
 {
     /// <summary>Gets the author displayed above the title.</summary>
     [JsonPropertyName("author")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public DiscordEmbedAuthor? Author { get; init; }
 
     /// <summary>Gets the embed title.</summary>
     [JsonPropertyName("title")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string? Title { get; init; }
 
     /// <summary>Gets the embed description.</summary>
     [JsonPropertyName("description")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string? Description { get; init; }
 
     /// <summary>Gets the URL that the title links to.</summary>
     [JsonPropertyName("url")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string? Url { get; init; }
 
     /// <summary>Gets the embed color (decimal integer).</summary>
@@ -61,18 +91,22 @@ public sealed class DiscordEmbed
 
     /// <summary>Gets the list of fields.</summary>
     [JsonPropertyName("fields")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public DiscordEmbedField[]? Fields { get; init; }
 
     /// <summary>Gets the thumbnail image displayed to the right of the embed.</summary>
     [JsonPropertyName("thumbnail")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public DiscordEmbedMedia? Thumbnail { get; init; }
 
     /// <summary>Gets the footer.</summary>
     [JsonPropertyName("footer")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public DiscordEmbedFooter? Footer { get; init; }
 
     /// <summary>Gets the ISO 8601 timestamp.</summary>
     [JsonPropertyName("timestamp")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string? Timestamp { get; init; }
 }
 
@@ -117,6 +151,7 @@ public sealed class DiscordEmbedFooter
 
     /// <summary>Gets the footer icon URL.</summary>
     [JsonPropertyName("icon_url")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string? IconUrl { get; init; }
 
     /// <summary>

@@ -1,4 +1,3 @@
-using System.Text.Json;
 using System.Threading.Tasks;
 using MediaBrowser.Controller.Events;
 using MediaBrowser.Controller.Events.Authentication;
@@ -41,11 +40,17 @@ public class AuthenticationFailureNotifier : IEventConsumer<AuthenticationReques
             return;
         }
 
-        _logger.LogWarning("AuthenticationFailureNotifier: Login attempt (success unknown) for {Username}", eventArgs.Username);
+        try
+        {
+            _logger.LogWarning("AuthenticationFailureNotifier: Login attempt (success unknown) for {Username}", eventArgs.Username);
 
-        var message = AuthenticationFailureTemplate.CreateMessage(eventArgs, config);
-        var json = JsonSerializer.Serialize(message);
+            var message = AuthenticationFailureTemplate.CreateMessage(eventArgs, config);
 
-        await _sender.SendPostToWebhook(config.WebhookUrl, json).ConfigureAwait(false);
+            await _sender.SendPostToWebhook(config.WebhookUrl, message).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "AuthenticationFailureNotifier: Error sending notification");
+        }
     }
 }

@@ -1,7 +1,8 @@
 using System;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.DiscordNotifier.Models;
+using MediaBrowser.Common.Api;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -10,6 +11,7 @@ namespace Jellyfin.Plugin.DiscordNotifier.Controllers
     /// <summary>
     /// API controller for testing Discord webhook notifications.
     /// </summary>
+    [Authorize(Policy = Policies.RequiresElevation)]
     [Route("DiscordNotifierApi/TestNotifier")]
     [ApiController]
     public class TestNotifierController : ControllerBase
@@ -36,6 +38,12 @@ namespace Jellyfin.Plugin.DiscordNotifier.Controllers
         [HttpGet]
         public async Task<ActionResult<string>> Get([FromQuery] string webhookUrl)
         {
+            if (string.IsNullOrWhiteSpace(webhookUrl)
+                || !DiscordSender.IsValidDiscordWebhookUrl(webhookUrl))
+            {
+                return BadRequest("Invalid webhook URL. Must be a Discord webhook URL (https://discord.com/api/webhooks/...).");
+            }
+
             var config = Plugin.Config;
 
             var testMessage = new DiscordWebhookPayload
@@ -52,9 +60,7 @@ namespace Jellyfin.Plugin.DiscordNotifier.Controllers
                     }
                 ]
             };
-            string jsonMessage = JsonSerializer.Serialize(testMessage);
-
-            bool result = await _sender.SendPostToWebhook(webhookUrl, jsonMessage).ConfigureAwait(false);
+            bool result = await _sender.SendPostToWebhook(webhookUrl, testMessage).ConfigureAwait(false);
 
             if (result)
             {
@@ -62,7 +68,7 @@ namespace Jellyfin.Plugin.DiscordNotifier.Controllers
             }
             else
             {
-                return BadRequest($"Message could not be sent, please check your configuration (webhookUrl: {webhookUrl}).");
+                return BadRequest("Message could not be sent, please check your configuration.");
             }
         }
     }

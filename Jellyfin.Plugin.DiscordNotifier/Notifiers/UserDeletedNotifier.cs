@@ -1,4 +1,3 @@
-using System.Text.Json;
 using Jellyfin.Data.Events.Users;
 using MediaBrowser.Controller.Events;
 using Jellyfin.Plugin.DiscordNotifier.Templates;
@@ -25,8 +24,6 @@ namespace Jellyfin.Plugin.DiscordNotifier.Notifiers
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task OnEvent(UserDeletedEventArgs eventArgs)
         {
-            ArgumentNullException.ThrowIfNull(eventArgs);
-
             var config = Plugin.Config;
             var webhookUrl = config.WebhookUrl;
 
@@ -42,13 +39,19 @@ namespace Jellyfin.Plugin.DiscordNotifier.Notifiers
                 return;
             }
 
-            _logger.LogInformation("UserDeletedNotifier: User deleted event received for user {Username}", eventArgs.Argument.Username);
+            try
+            {
+                _logger.LogInformation("UserDeletedNotifier: User deleted event received for user {Username}", eventArgs.Argument.Username);
 
-            var messageObject = UserDeletedTemplate.CreateMessage(eventArgs, config);
-            var jsonMessage = JsonSerializer.Serialize(messageObject);
+                var messageObject = UserDeletedTemplate.CreateMessage(eventArgs, config);
 
-            _logger.LogInformation("UserDeletedNotifier: Sending message to Discord");
-            await _sender.SendPostToWebhook(webhookUrl, jsonMessage).ConfigureAwait(false);
+                _logger.LogInformation("UserDeletedNotifier: Sending message to Discord");
+                await _sender.SendPostToWebhook(webhookUrl, messageObject).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "UserDeletedNotifier: Error sending notification");
+            }
         }
     }
 }

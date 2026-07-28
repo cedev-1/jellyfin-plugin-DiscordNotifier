@@ -1,4 +1,3 @@
-using System.Text.Json;
 using System.Threading.Tasks;
 using MediaBrowser.Controller.Events;
 using MediaBrowser.Controller.Events.Authentication;
@@ -41,11 +40,17 @@ public class AuthenticationSuccessNotifier : IEventConsumer<AuthenticationResult
             return;
         }
 
-        _logger.LogInformation("AuthenticationSuccessNotifier: Success for user {Username}", eventArgs.User.Name);
+        try
+        {
+            _logger.LogInformation("AuthenticationSuccessNotifier: Success for user {Username}", eventArgs.User.Name);
 
-        var message = AuthenticationSuccessTemplate.CreateMessage(eventArgs, config);
-        var json = JsonSerializer.Serialize(message);
+            var message = AuthenticationSuccessTemplate.CreateMessage(eventArgs, config);
 
-        await _sender.SendPostToWebhook(config.WebhookUrl, json).ConfigureAwait(false);
+            await _sender.SendPostToWebhook(config.WebhookUrl, message).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "AuthenticationSuccessNotifier: Error sending notification");
+        }
     }
 }

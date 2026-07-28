@@ -55,13 +55,17 @@ The following features are planned.
 
 ### Notifications
 
-- [ ] `UserLockedOut` — notify when an account is locked after too many failed attempts
-- [ ] `UserUpdated` — notify when a user account is modified
-- [ ] `UserPasswordChanged` — notify when a user changes their password
-- [ ] `SessionStart` — notify when a new client session is opened (before playback)
-- [ ] `PlaybackProgress` — notify at a defined interval during playback
-- [ ] `ItemDeleted` — notify when media is removed from the library
-- [ ] `TaskCompleted` — notify when a scheduled task finishes (library scan, backup, etc.)
+- [x] `UserLockedOut` — notify when an account is locked after too many failed attempts
+- [x] `UserUpdated` — notify when a user account is modified
+- [x] `UserPasswordChanged` — notify when a user changes their password
+- [x] `SessionStart` — notify when a new client session is opened (before playback)
+- [x] `PlaybackProgress` — notify at a defined interval during playback (configurable, movies and series only)
+- [x] `ItemDeleted` — notify when media is removed from the library
+- [x] `TaskCompleted` — notify when a scheduled task finishes (library scan, backup, etc.)
+- [x] `PluginInstalled` / `PluginUpdated` / `PluginUninstalled` / `PluginInstallationFailed` / `PluginInstallationCancelled` — notify on plugin lifecycle events
+- [x] `PendingRestart` — notify when the server requires a restart after an update
+- [x] `SubtitleDownloadFailure` — notify when a subtitle download fails
+- [x] `UserDataSaved` — notify when a user marks content as watched/unwatched or rates it
 
 ---
 

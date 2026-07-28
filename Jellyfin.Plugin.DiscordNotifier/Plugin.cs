@@ -54,7 +54,10 @@ namespace Jellyfin.Plugin.DiscordNotifier
             yield return new PluginPageInfo
             {
                 Name = this.Name,
-                EmbeddedResourcePath = $"{GetType().Namespace}.Configuration.Web.configPage.html"
+                EmbeddedResourcePath = $"{GetType().Namespace}.Configuration.Web.configPage.html",
+                EnableInMainMenu = true,
+                MenuSection = "server",
+                MenuIcon = "notifications"
             };
             yield return new PluginPageInfo
             {

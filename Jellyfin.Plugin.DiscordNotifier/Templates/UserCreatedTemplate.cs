@@ -27,13 +27,13 @@ namespace Jellyfin.Plugin.DiscordNotifier.Templates
                 [
                     new DiscordEmbed
                     {
-                        Title = "🪼 New User Created",
+                        Title = "New User Created",
                         Description = "A new account has been created on the server.",
                         Url = $"{serverUrl}/web/#/dashboard/users/profile?userId={eventArgs.Argument.Id}",
                         Color = 0x4C8BF5,
                         Fields =
                         [
-                            new DiscordEmbedField { Name = "Username", Value = eventArgs.Argument.Username, Inline = true },
+                            new DiscordEmbedField { Name = "Username", Value = DiscordText.Safe(eventArgs.Argument.Username), Inline = true },
                             new DiscordEmbedField { Name = "User ID", Value = eventArgs.Argument.Id.ToString(), Inline = true }
                         ],
                         Footer = DiscordEmbedFooter.FromConfig(config),

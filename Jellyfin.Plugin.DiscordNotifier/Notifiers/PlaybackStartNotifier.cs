@@ -1,4 +1,4 @@
-using System.Text.Json;
+using System;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.DiscordNotifier.Templates;
 using MediaBrowser.Controller.Events;
@@ -62,20 +62,29 @@ public class PlaybackStartNotifier : IEventConsumer<PlaybackStartEventArgs>
 
         var playMethod = eventArgs.Session?.PlayState?.PlayMethod;
         var isTranscoding = playMethod == PlayMethod.Transcode;
+        var isRemux = playMethod == PlayMethod.DirectStream;
 
-        if (config.PlaybackDetailedMode && config.PlaybackTranscodeOnlyNotifier && !isTranscoding)
+        // "Transcoding sessions only" notifies whenever the server isn't Direct Playing —
+        // i.e. it has to transcode or remux on the fly. Works independently of detailed mode.
+        if (config.PlaybackTranscodeOnlyNotifier && !isTranscoding && !isRemux)
         {
             return;
         }
 
-        _logger.LogInformation(
-            "PlaybackStartNotifier: {UserName} started playback of {ItemName} via {PlayMethod}",
-            eventArgs.Session?.UserName ?? "Unknown",
-            eventArgs.Item.Name,
-            playMethod?.ToString() ?? "Unknown");
+        try
+        {
+            _logger.LogInformation(
+                "PlaybackStartNotifier: {UserName} started playback of {ItemName} via {PlayMethod}",
+                eventArgs.Session?.UserName ?? "Unknown",
+                eventArgs.Item.Name,
+                playMethod?.ToString() ?? "Unknown");
 
-        var message = PlaybackStartTemplate.CreateMessage(eventArgs, config);
-        var json = JsonSerializer.Serialize(message);
-        await _sender.SendPostToWebhook(config.WebhookUrl, json).ConfigureAwait(false);
+            var message = PlaybackStartTemplate.CreateMessage(eventArgs, config);
+            await _sender.SendPostToWebhook(config.WebhookUrl, message).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "PlaybackStartNotifier: Error sending notification");
+        }
     }
 }
