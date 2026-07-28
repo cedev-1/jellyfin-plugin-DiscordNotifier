@@ -1,7 +1,7 @@
 ---
 name: "Discord Notifier"
 guid: "8f3c85d3-19cf-4e50-a57e-7d2ce3c0c413"
-version: "1.7.0.0"
+version: "1.8.0.0"
 targetAbi: "10.11.0.0"
 framework: "net9.0"
 overview: "Sends configurable Discord webhook notifications for media, user, playback, and server events."
