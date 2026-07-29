@@ -49,6 +49,10 @@ https://raw.githubusercontent.com/cedev-1/Jellyfin-Plugin-DiscordNotifier/main/m
 3. **Notifications** — enable/disable each event type individually
 4. **Advanced options** — grouping delays, playback filters, detailed mode
 
+## Configuration Preview
+
+<img width="1167" height="855" alt="Screenshot 2026-07-29 at 19 09 51" src="https://github.com/user-attachments/assets/33b2978c-e24e-4f1c-8375-e75a73e67fe4" />
+
 ## Development
 
 I recommend using Nix with flakes for a reproducible development environment. You can use the provided `flake.nix` file to set up your development shell with all the necessary dependencies.
