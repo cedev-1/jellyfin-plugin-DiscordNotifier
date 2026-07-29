@@ -1,0 +1,11 @@
+---
+services:
+  jellyfin:
+    image: lscr.io/linuxserver/jellyfin:latest
+    container_name: jellyfin
+    volumes:
+      - ./library:/config
+      - ./movies:/movies
+    ports:
+      - 8096:8096
+    restart: unless-stopped
