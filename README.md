@@ -51,6 +51,10 @@ https://raw.githubusercontent.com/cedev-1/Jellyfin-Plugin-DiscordNotifier/main/m
 
 ## Configuration Preview
 
+The settings page includes a built-in **notification preview** that shows how your Discord embeds will look for each event type. You can also customize the **bot display name** and **avatar** from the Webhook Appearance section.
+
+> **Note:** The preview is an approximation and may not be 100% identical to the actual Discord rendering.
+
 <img width="1167" height="855" alt="Screenshot 2026-07-29 at 19 09 51" src="https://github.com/user-attachments/assets/33b2978c-e24e-4f1c-8375-e75a73e67fe4" />
 
 ## Development
