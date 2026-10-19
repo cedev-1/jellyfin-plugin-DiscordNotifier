@@ -30,7 +30,7 @@ public class PluginUpdatedNotifier : IEventConsumer<PluginUpdatedEventArgs>
     public async Task OnEvent(PluginUpdatedEventArgs eventArgs)
     {
         var config = Plugin.Config;
-        if (!config.EnablePlugin || !config.PluginUpdatedNotifier || string.IsNullOrWhiteSpace(config.WebhookUrl))
+        if (!config.EnablePlugin || !config.PluginUpdatedNotifier || !config.HasWebhookFor(NotifierEvent.PluginUpdated))
         {
             return;
         }
@@ -40,7 +40,7 @@ public class PluginUpdatedNotifier : IEventConsumer<PluginUpdatedEventArgs>
             _logger.LogInformation("PluginUpdatedNotifier: {PluginName} v{Version}", eventArgs.Argument.Name, eventArgs.Argument.Version);
 
             var message = PluginEventTemplate.CreateUpdatedMessage(eventArgs.Argument, config);
-            await _sender.SendPostToWebhook(config.WebhookUrl, message).ConfigureAwait(false);
+            await _sender.SendAsync(NotifierEvent.PluginUpdated, message).ConfigureAwait(false);
         }
         catch (Exception ex)
         {

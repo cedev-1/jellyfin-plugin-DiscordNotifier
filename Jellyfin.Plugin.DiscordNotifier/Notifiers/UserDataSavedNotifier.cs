@@ -144,7 +144,7 @@ public class UserDataSavedNotifier : IHostedService
     private async Task FlushGroupAsync(string key, List<UserDataSaveEventArgs> events)
     {
         var config = Plugin.Config;
-        if (!config.EnablePlugin || !config.UserDataSavedNotifier || string.IsNullOrWhiteSpace(config.WebhookUrl))
+        if (!config.EnablePlugin || !config.UserDataSavedNotifier || !config.HasWebhookFor(NotifierEvent.UserDataSaved))
         {
             return;
         }
@@ -177,7 +177,7 @@ public class UserDataSavedNotifier : IHostedService
                 try
                 {
                     var message = UserDataSavedTemplate.CreateMessage(e, userName, config);
-                    await _sender.SendPostToWebhook(config.WebhookUrl, message).ConfigureAwait(false);
+                    await _sender.SendAsync(NotifierEvent.UserDataSaved, message).ConfigureAwait(false);
                     sent++;
                 }
                 catch (Exception ex)
@@ -204,7 +204,7 @@ public class UserDataSavedNotifier : IHostedService
                 events.Count);
 
             var summary = UserDataSavedTemplate.CreateBatchMessage(userName, action, events.Count, config);
-            await _sender.SendPostToWebhook(config.WebhookUrl, summary).ConfigureAwait(false);
+            await _sender.SendAsync(NotifierEvent.UserDataSaved, summary).ConfigureAwait(false);
         }
         catch (Exception ex)
         {

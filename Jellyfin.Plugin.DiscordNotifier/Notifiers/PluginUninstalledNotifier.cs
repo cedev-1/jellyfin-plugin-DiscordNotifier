@@ -30,7 +30,7 @@ public class PluginUninstalledNotifier : IEventConsumer<PluginUninstalledEventAr
     public async Task OnEvent(PluginUninstalledEventArgs eventArgs)
     {
         var config = Plugin.Config;
-        if (!config.EnablePlugin || !config.PluginUninstalledNotifier || string.IsNullOrWhiteSpace(config.WebhookUrl))
+        if (!config.EnablePlugin || !config.PluginUninstalledNotifier || !config.HasWebhookFor(NotifierEvent.PluginUninstalled))
         {
             return;
         }
@@ -40,7 +40,7 @@ public class PluginUninstalledNotifier : IEventConsumer<PluginUninstalledEventAr
             _logger.LogInformation("PluginUninstalledNotifier: {PluginName}", eventArgs.Argument.Name);
 
             var message = PluginEventTemplate.CreateUninstalledMessage(eventArgs.Argument, config);
-            await _sender.SendPostToWebhook(config.WebhookUrl, message).ConfigureAwait(false);
+            await _sender.SendAsync(NotifierEvent.PluginUninstalled, message).ConfigureAwait(false);
         }
         catch (Exception ex)
         {

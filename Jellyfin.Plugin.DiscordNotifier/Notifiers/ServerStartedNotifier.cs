@@ -30,7 +30,7 @@ public class ServerStartedNotifier : IHostedService
     public Task StartAsync(CancellationToken cancellationToken)
     {
         var config = Plugin.Instance?.Configuration;
-        if (config is null || !config.EnablePlugin || !config.ServerStartedNotifier || string.IsNullOrWhiteSpace(config.WebhookUrl))
+        if (config is null || !config.EnablePlugin || !config.ServerStartedNotifier || !config.HasWebhookFor(NotifierEvent.ServerStarted))
         {
             return Task.CompletedTask;
         }
@@ -53,7 +53,7 @@ public class ServerStartedNotifier : IHostedService
             _logger.LogInformation("ServerStartedNotifier: sending server started notification");
 
             var message = ServerStartedTemplate.CreateMessage(config);
-            await _sender.SendPostToWebhook(config.WebhookUrl, message).ConfigureAwait(false);
+            await _sender.SendAsync(NotifierEvent.ServerStarted, message).ConfigureAwait(false);
         }
         catch (OperationCanceledException)
         {

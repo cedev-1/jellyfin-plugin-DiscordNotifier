@@ -32,8 +32,7 @@ public class UserCreatedNotifier : IEventConsumer<UserCreatedEventArgs>
     public async Task OnEvent(UserCreatedEventArgs eventArgs)
     {
         var config = Plugin.Config;
-        var webhookUrl = config.WebhookUrl;
-        if (string.IsNullOrWhiteSpace(webhookUrl))
+        if (!config.HasWebhookFor(NotifierEvent.UserCreated))
         {
             _logger.LogError("Webhook URL is not set.");
             return;
@@ -58,7 +57,7 @@ public class UserCreatedNotifier : IEventConsumer<UserCreatedEventArgs>
             var messageObject = UserCreatedTemplate.CreateMessage(eventArgs, config);
 
             _logger.LogInformation("UserCreatedNotifier: Sending message to Discord");
-            await _sender.SendPostToWebhook(webhookUrl, messageObject).ConfigureAwait(false);
+            await _sender.SendAsync(NotifierEvent.UserCreated, messageObject).ConfigureAwait(false);
         }
         catch (Exception ex)
         {

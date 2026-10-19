@@ -30,7 +30,7 @@ public class PluginInstallingNotifier : IEventConsumer<PluginInstallingEventArgs
     public async Task OnEvent(PluginInstallingEventArgs eventArgs)
     {
         var config = Plugin.Config;
-        if (!config.EnablePlugin || !config.PluginInstallingNotifier || string.IsNullOrWhiteSpace(config.WebhookUrl))
+        if (!config.EnablePlugin || !config.PluginInstallingNotifier || !config.HasWebhookFor(NotifierEvent.PluginInstalling))
         {
             return;
         }
@@ -40,7 +40,7 @@ public class PluginInstallingNotifier : IEventConsumer<PluginInstallingEventArgs
             _logger.LogInformation("PluginInstallingNotifier: {PluginName} v{Version}", eventArgs.Argument.Name, eventArgs.Argument.Version);
 
             var message = PluginEventTemplate.CreateInstallingMessage(eventArgs.Argument, config);
-            await _sender.SendPostToWebhook(config.WebhookUrl, message).ConfigureAwait(false);
+            await _sender.SendAsync(NotifierEvent.PluginInstalling, message).ConfigureAwait(false);
         }
         catch (Exception ex)
         {

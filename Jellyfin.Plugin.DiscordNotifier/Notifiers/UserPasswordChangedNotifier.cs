@@ -30,7 +30,7 @@ public class UserPasswordChangedNotifier : IEventConsumer<UserPasswordChangedEve
     public async Task OnEvent(UserPasswordChangedEventArgs eventArgs)
     {
         var config = Plugin.Config;
-        if (!config.EnablePlugin || !config.UserPasswordChangedNotifier || string.IsNullOrWhiteSpace(config.WebhookUrl))
+        if (!config.EnablePlugin || !config.UserPasswordChangedNotifier || !config.HasWebhookFor(NotifierEvent.UserPasswordChanged))
         {
             return;
         }
@@ -40,7 +40,7 @@ public class UserPasswordChangedNotifier : IEventConsumer<UserPasswordChangedEve
             _logger.LogInformation("UserPasswordChangedNotifier: {Username} changed their password", eventArgs.Argument.Username);
 
             var message = UserPasswordChangedTemplate.CreateMessage(eventArgs, config);
-            await _sender.SendPostToWebhook(config.WebhookUrl, message).ConfigureAwait(false);
+            await _sender.SendAsync(NotifierEvent.UserPasswordChanged, message).ConfigureAwait(false);
         }
         catch (Exception ex)
         {

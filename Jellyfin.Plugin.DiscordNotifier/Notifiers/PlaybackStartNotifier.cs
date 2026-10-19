@@ -31,7 +31,7 @@ public class PlaybackStartNotifier : IEventConsumer<PlaybackStartEventArgs>
     public async Task OnEvent(PlaybackStartEventArgs eventArgs)
     {
         var config = Plugin.Config;
-        if (!config.EnablePlugin || !config.PlaybackStartNotifier || string.IsNullOrWhiteSpace(config.WebhookUrl))
+        if (!config.EnablePlugin || !config.PlaybackStartNotifier || !config.HasWebhookFor(NotifierEvent.PlaybackStart))
         {
             return;
         }
@@ -80,7 +80,7 @@ public class PlaybackStartNotifier : IEventConsumer<PlaybackStartEventArgs>
                 playMethod?.ToString() ?? "Unknown");
 
             var message = PlaybackStartTemplate.CreateMessage(eventArgs, config);
-            await _sender.SendPostToWebhook(config.WebhookUrl, message).ConfigureAwait(false);
+            await _sender.SendAsync(NotifierEvent.PlaybackStart, message).ConfigureAwait(false);
         }
         catch (Exception ex)
         {

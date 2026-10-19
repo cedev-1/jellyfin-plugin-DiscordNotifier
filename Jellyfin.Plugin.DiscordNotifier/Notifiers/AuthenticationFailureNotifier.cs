@@ -34,7 +34,7 @@ public class AuthenticationFailureNotifier : IEventConsumer<AuthenticationReques
     public async Task OnEvent(AuthenticationRequestEventArgs eventArgs)
     {
         var config = Plugin.Config;
-        if (!config.EnablePlugin || !config.AuthenticationFailureNotifier || string.IsNullOrWhiteSpace(config.WebhookUrl))
+        if (!config.EnablePlugin || !config.AuthenticationFailureNotifier || !config.HasWebhookFor(NotifierEvent.AuthenticationFailure))
         {
             _logger.LogInformation("AuthenticationFailureNotifier is disabled or Webhook URL is missing.");
             return;
@@ -46,7 +46,7 @@ public class AuthenticationFailureNotifier : IEventConsumer<AuthenticationReques
 
             var message = AuthenticationFailureTemplate.CreateMessage(eventArgs, config);
 
-            await _sender.SendPostToWebhook(config.WebhookUrl, message).ConfigureAwait(false);
+            await _sender.SendAsync(NotifierEvent.AuthenticationFailure, message).ConfigureAwait(false);
         }
         catch (Exception ex)
         {

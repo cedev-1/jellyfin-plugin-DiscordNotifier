@@ -56,7 +56,7 @@ public class TaskCompletedNotifier : IHostedService
         try
         {
             var config = Plugin.Config;
-            if (!config.EnablePlugin || !config.TaskCompletedNotifier || string.IsNullOrWhiteSpace(config.WebhookUrl))
+            if (!config.EnablePlugin || !config.TaskCompletedNotifier || !config.HasWebhookFor(NotifierEvent.TaskCompleted))
             {
                 return;
             }
@@ -74,7 +74,7 @@ public class TaskCompletedNotifier : IHostedService
                 eventArgs.Result.Status);
 
             var message = TaskCompletedTemplate.CreateMessage(eventArgs, config);
-            await _sender.SendPostToWebhook(config.WebhookUrl, message).ConfigureAwait(false);
+            await _sender.SendAsync(NotifierEvent.TaskCompleted, message).ConfigureAwait(false);
         }
         catch (Exception ex)
         {

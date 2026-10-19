@@ -31,7 +31,7 @@ public class PlaybackStopNotifier : IEventConsumer<PlaybackStopEventArgs>
     public async Task OnEvent(PlaybackStopEventArgs eventArgs)
     {
         var config = Plugin.Config;
-        if (!config.EnablePlugin || !config.PlaybackStopNotifier || string.IsNullOrWhiteSpace(config.WebhookUrl))
+        if (!config.EnablePlugin || !config.PlaybackStopNotifier || !config.HasWebhookFor(NotifierEvent.PlaybackStop))
         {
             return;
         }
@@ -78,7 +78,7 @@ public class PlaybackStopNotifier : IEventConsumer<PlaybackStopEventArgs>
                 eventArgs.PlayedToCompletion);
 
             var message = PlaybackStopTemplate.CreateMessage(eventArgs, config);
-            await _sender.SendPostToWebhook(config.WebhookUrl, message).ConfigureAwait(false);
+            await _sender.SendAsync(NotifierEvent.PlaybackStop, message).ConfigureAwait(false);
         }
         catch (Exception ex)
         {

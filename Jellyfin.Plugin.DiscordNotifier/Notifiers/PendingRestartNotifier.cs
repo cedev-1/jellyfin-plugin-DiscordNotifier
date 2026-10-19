@@ -56,7 +56,7 @@ public class PendingRestartNotifier : IHostedService
         try
         {
             var config = Plugin.Config;
-            if (!config.EnablePlugin || !config.PendingRestartNotifier || string.IsNullOrWhiteSpace(config.WebhookUrl))
+            if (!config.EnablePlugin || !config.PendingRestartNotifier || !config.HasWebhookFor(NotifierEvent.PendingRestart))
             {
                 return;
             }
@@ -64,7 +64,7 @@ public class PendingRestartNotifier : IHostedService
             _logger.LogInformation("PendingRestartNotifier: server restart required");
 
             var message = PendingRestartTemplate.CreateMessage(config);
-            await _sender.SendPostToWebhook(config.WebhookUrl, message).ConfigureAwait(false);
+            await _sender.SendAsync(NotifierEvent.PendingRestart, message).ConfigureAwait(false);
         }
         catch (Exception ex)
         {

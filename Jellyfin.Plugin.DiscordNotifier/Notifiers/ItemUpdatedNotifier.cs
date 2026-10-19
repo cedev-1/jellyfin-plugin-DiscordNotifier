@@ -61,7 +61,7 @@ public class ItemUpdatedNotifier : IHostedService
         try
         {
             var config = Plugin.Config;
-            if (!config.EnablePlugin || !config.ItemUpdatedNotifier || string.IsNullOrWhiteSpace(config.WebhookUrl))
+            if (!config.EnablePlugin || !config.ItemUpdatedNotifier || !config.HasWebhookFor(NotifierEvent.ItemUpdated))
             {
                 return;
             }
@@ -95,7 +95,7 @@ public class ItemUpdatedNotifier : IHostedService
             _logger.LogInformation("ItemUpdatedNotifier: {ItemName} ({ItemType}) metadata updated", item.Name, typeName);
 
             var message = ItemUpdatedTemplate.CreateMessage(item, config);
-            await _sender.SendPostToWebhook(config.WebhookUrl, message).ConfigureAwait(false);
+            await _sender.SendAsync(NotifierEvent.ItemUpdated, message).ConfigureAwait(false);
         }
         catch (Exception ex)
         {

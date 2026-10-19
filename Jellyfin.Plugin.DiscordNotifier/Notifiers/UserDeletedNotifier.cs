@@ -25,9 +25,8 @@ namespace Jellyfin.Plugin.DiscordNotifier.Notifiers
         public async Task OnEvent(UserDeletedEventArgs eventArgs)
         {
             var config = Plugin.Config;
-            var webhookUrl = config.WebhookUrl;
 
-            if (string.IsNullOrWhiteSpace(webhookUrl))
+            if (!config.HasWebhookFor(NotifierEvent.UserDeleted))
             {
                 _logger.LogError("Webhook URL is not set.");
                 return;
@@ -46,7 +45,7 @@ namespace Jellyfin.Plugin.DiscordNotifier.Notifiers
                 var messageObject = UserDeletedTemplate.CreateMessage(eventArgs, config);
 
                 _logger.LogInformation("UserDeletedNotifier: Sending message to Discord");
-                await _sender.SendPostToWebhook(webhookUrl, messageObject).ConfigureAwait(false);
+                await _sender.SendAsync(NotifierEvent.UserDeleted, messageObject).ConfigureAwait(false);
             }
             catch (Exception ex)
             {

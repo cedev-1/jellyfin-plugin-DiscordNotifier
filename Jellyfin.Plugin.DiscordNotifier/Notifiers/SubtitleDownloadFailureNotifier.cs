@@ -105,7 +105,7 @@ public class SubtitleDownloadFailureNotifier : IHostedService
     private async Task FlushAsync()
     {
         var config = Plugin.Config;
-        if (!config.EnablePlugin || !config.SubtitleDownloadFailureNotifier || string.IsNullOrWhiteSpace(config.WebhookUrl))
+        if (!config.EnablePlugin || !config.SubtitleDownloadFailureNotifier || !config.HasWebhookFor(NotifierEvent.SubtitleDownloadFailure))
         {
             while (_queue.TryDequeue(out _))
             {
@@ -133,7 +133,7 @@ public class SubtitleDownloadFailureNotifier : IHostedService
                 try
                 {
                     var message = SubtitleDownloadFailureTemplate.CreateMessage(e, config);
-                    await _sender.SendPostToWebhook(config.WebhookUrl, message).ConfigureAwait(false);
+                    await _sender.SendAsync(NotifierEvent.SubtitleDownloadFailure, message).ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {
@@ -170,7 +170,7 @@ public class SubtitleDownloadFailureNotifier : IHostedService
                 ]
             };
 
-            await _sender.SendPostToWebhook(config.WebhookUrl, summary).ConfigureAwait(false);
+            await _sender.SendAsync(NotifierEvent.SubtitleDownloadFailure, summary).ConfigureAwait(false);
         }
         catch (Exception ex)
         {

@@ -30,7 +30,7 @@ public class UserUpdatedNotifier : IEventConsumer<UserUpdatedEventArgs>
     public async Task OnEvent(UserUpdatedEventArgs eventArgs)
     {
         var config = Plugin.Config;
-        if (!config.EnablePlugin || !config.UserUpdatedNotifier || string.IsNullOrWhiteSpace(config.WebhookUrl))
+        if (!config.EnablePlugin || !config.UserUpdatedNotifier || !config.HasWebhookFor(NotifierEvent.UserUpdated))
         {
             return;
         }
@@ -40,7 +40,7 @@ public class UserUpdatedNotifier : IEventConsumer<UserUpdatedEventArgs>
             _logger.LogInformation("UserUpdatedNotifier: {Username} account updated", eventArgs.Argument.Username);
 
             var message = UserUpdatedTemplate.CreateMessage(eventArgs, config);
-            await _sender.SendPostToWebhook(config.WebhookUrl, message).ConfigureAwait(false);
+            await _sender.SendAsync(NotifierEvent.UserUpdated, message).ConfigureAwait(false);
         }
         catch (Exception ex)
         {

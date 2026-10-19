@@ -30,7 +30,7 @@ public class UserLockedOutNotifier : IEventConsumer<UserLockedOutEventArgs>
     public async Task OnEvent(UserLockedOutEventArgs eventArgs)
     {
         var config = Plugin.Config;
-        if (!config.EnablePlugin || !config.UserLockedOutNotifier || string.IsNullOrWhiteSpace(config.WebhookUrl))
+        if (!config.EnablePlugin || !config.UserLockedOutNotifier || !config.HasWebhookFor(NotifierEvent.UserLockedOut))
         {
             return;
         }
@@ -40,7 +40,7 @@ public class UserLockedOutNotifier : IEventConsumer<UserLockedOutEventArgs>
             _logger.LogInformation("UserLockedOutNotifier: {Username} has been locked out", eventArgs.Argument.Username);
 
             var message = UserLockedOutTemplate.CreateMessage(eventArgs, config);
-            await _sender.SendPostToWebhook(config.WebhookUrl, message).ConfigureAwait(false);
+            await _sender.SendAsync(NotifierEvent.UserLockedOut, message).ConfigureAwait(false);
         }
         catch (Exception ex)
         {

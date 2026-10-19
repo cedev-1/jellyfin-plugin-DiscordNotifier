@@ -37,7 +37,7 @@ public class SessionEndedNotifier : IEventConsumer<SessionEndedEventArgs>
     public async Task OnEvent(SessionEndedEventArgs eventArgs)
     {
         var config = Plugin.Config;
-        if (!config.EnablePlugin || !config.SessionEndedNotifier || string.IsNullOrWhiteSpace(config.WebhookUrl))
+        if (!config.EnablePlugin || !config.SessionEndedNotifier || !config.HasWebhookFor(NotifierEvent.SessionEnded))
         {
             return;
         }
@@ -66,7 +66,7 @@ public class SessionEndedNotifier : IEventConsumer<SessionEndedEventArgs>
                 eventArgs.Argument.DeviceName ?? "Unknown");
 
             var message = SessionEndedTemplate.CreateMessage(eventArgs.Argument, config);
-            await _sender.SendPostToWebhook(config.WebhookUrl, message).ConfigureAwait(false);
+            await _sender.SendAsync(NotifierEvent.SessionEnded, message).ConfigureAwait(false);
         }
         catch (Exception ex)
         {

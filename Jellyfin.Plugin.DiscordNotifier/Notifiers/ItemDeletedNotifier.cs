@@ -159,7 +159,7 @@ public class ItemDeletedNotifier : IHostedService
     private async Task FlushReadyGroupsAsync()
     {
         var config = Plugin.Config;
-        if (!config.EnablePlugin || !config.ItemDeletedNotifier || string.IsNullOrWhiteSpace(config.WebhookUrl))
+        if (!config.EnablePlugin || !config.ItemDeletedNotifier || !config.HasWebhookFor(NotifierEvent.ItemDeleted))
         {
             _queue.Clear();
             _lastActivity.Clear();
@@ -219,7 +219,7 @@ public class ItemDeletedNotifier : IHostedService
                     ? ItemDeletedTemplate.CreateMessage(episodeList[0], config)
                     : ItemDeletedTemplate.CreateEpisodeGroupMessage(episodeList, config, seriesDeleted);
 
-                await _sender.SendPostToWebhook(config.WebhookUrl, message).ConfigureAwait(false);
+                await _sender.SendAsync(NotifierEvent.ItemDeleted, message).ConfigureAwait(false);
                 sent++;
                 await Task.Delay(InterSendDelay).ConfigureAwait(false);
             }
@@ -274,7 +274,7 @@ public class ItemDeletedNotifier : IHostedService
                     ? ItemDeletedTemplate.CreateMessage(trackList[0], config)
                     : ItemDeletedTemplate.CreateTrackGroupMessage(trackList, config);
 
-                await _sender.SendPostToWebhook(config.WebhookUrl, message).ConfigureAwait(false);
+                await _sender.SendAsync(NotifierEvent.ItemDeleted, message).ConfigureAwait(false);
                 sent++;
                 await Task.Delay(InterSendDelay).ConfigureAwait(false);
             }
@@ -309,7 +309,7 @@ public class ItemDeletedNotifier : IHostedService
             try
             {
                 var message = ItemDeletedTemplate.CreateMessage(entry.Item, config);
-                await _sender.SendPostToWebhook(config.WebhookUrl, message).ConfigureAwait(false);
+                await _sender.SendAsync(NotifierEvent.ItemDeleted, message).ConfigureAwait(false);
                 sent++;
                 await Task.Delay(InterSendDelay).ConfigureAwait(false);
             }

@@ -30,7 +30,7 @@ public class PluginInstallationCancelledNotifier : IEventConsumer<PluginInstalla
     public async Task OnEvent(PluginInstallationCancelledEventArgs eventArgs)
     {
         var config = Plugin.Config;
-        if (!config.EnablePlugin || !config.PluginInstallationCancelledNotifier || string.IsNullOrWhiteSpace(config.WebhookUrl))
+        if (!config.EnablePlugin || !config.PluginInstallationCancelledNotifier || !config.HasWebhookFor(NotifierEvent.PluginInstallationCancelled))
         {
             return;
         }
@@ -40,7 +40,7 @@ public class PluginInstallationCancelledNotifier : IEventConsumer<PluginInstalla
             _logger.LogInformation("PluginInstallationCancelledNotifier: {PluginName}", eventArgs.Argument.Name);
 
             var message = PluginEventTemplate.CreateCancelledMessage(eventArgs.Argument, config);
-            await _sender.SendPostToWebhook(config.WebhookUrl, message).ConfigureAwait(false);
+            await _sender.SendAsync(NotifierEvent.PluginInstallationCancelled, message).ConfigureAwait(false);
         }
         catch (Exception ex)
         {

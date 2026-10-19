@@ -38,7 +38,7 @@ public class PlaybackProgressNotifier : IEventConsumer<PlaybackProgressEventArgs
     public async Task OnEvent(PlaybackProgressEventArgs eventArgs)
     {
         var config = Plugin.Config;
-        if (!config.EnablePlugin || !config.PlaybackProgressNotifier || string.IsNullOrWhiteSpace(config.WebhookUrl))
+        if (!config.EnablePlugin || !config.PlaybackProgressNotifier || !config.HasWebhookFor(NotifierEvent.PlaybackProgress))
         {
             return;
         }
@@ -111,7 +111,7 @@ public class PlaybackProgressNotifier : IEventConsumer<PlaybackProgressEventArgs
                 eventArgs.Item.Name);
 
             var message = PlaybackProgressTemplate.CreateMessage(eventArgs, config);
-            await _sender.SendPostToWebhook(config.WebhookUrl, message).ConfigureAwait(false);
+            await _sender.SendAsync(NotifierEvent.PlaybackProgress, message).ConfigureAwait(false);
         }
         catch (Exception ex)
         {

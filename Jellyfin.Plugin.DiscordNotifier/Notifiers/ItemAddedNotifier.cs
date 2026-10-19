@@ -236,7 +236,7 @@ public class ItemAddedNotifier : IHostedService
     private async Task FlushInternalAsync(bool force)
     {
         var config = Plugin.Config;
-        if (!config.EnablePlugin || !config.ItemAddedNotifier || string.IsNullOrWhiteSpace(config.WebhookUrl))
+        if (!config.EnablePlugin || !config.ItemAddedNotifier || !config.HasWebhookFor(NotifierEvent.ItemAdded))
         {
             _queue.Clear();
             _lastActivity.Clear();
@@ -303,7 +303,7 @@ public class ItemAddedNotifier : IHostedService
                     ? ItemAddedTemplate.CreateMessage(episodeList[0], config)
                     : ItemAddedTemplate.CreateEpisodeGroupMessage(episodeList, config, isNewSeries);
 
-                await _sender.SendPostToWebhook(config.WebhookUrl, message).ConfigureAwait(false);
+                await _sender.SendAsync(NotifierEvent.ItemAdded, message).ConfigureAwait(false);
                 sent++;
                 await Task.Delay(InterSendDelay).ConfigureAwait(false);
             }
@@ -362,7 +362,7 @@ public class ItemAddedNotifier : IHostedService
                     ? ItemAddedTemplate.CreateMessage(trackList[0], config)
                     : ItemAddedTemplate.CreateTrackGroupMessage(trackList, config);
 
-                await _sender.SendPostToWebhook(config.WebhookUrl, message).ConfigureAwait(false);
+                await _sender.SendAsync(NotifierEvent.ItemAdded, message).ConfigureAwait(false);
                 sent++;
                 await Task.Delay(InterSendDelay).ConfigureAwait(false);
             }
@@ -402,7 +402,7 @@ public class ItemAddedNotifier : IHostedService
             try
             {
                 var message = ItemAddedTemplate.CreateMessage(updated, config);
-                await _sender.SendPostToWebhook(config.WebhookUrl, message).ConfigureAwait(false);
+                await _sender.SendAsync(NotifierEvent.ItemAdded, message).ConfigureAwait(false);
                 sent++;
                 await Task.Delay(InterSendDelay).ConfigureAwait(false);
             }

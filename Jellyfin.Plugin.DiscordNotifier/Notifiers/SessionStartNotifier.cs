@@ -36,7 +36,7 @@ public class SessionStartNotifier : IEventConsumer<SessionStartedEventArgs>
     public async Task OnEvent(SessionStartedEventArgs eventArgs)
     {
         var config = Plugin.Config;
-        if (!config.EnablePlugin || !config.SessionStartNotifier || string.IsNullOrWhiteSpace(config.WebhookUrl))
+        if (!config.EnablePlugin || !config.SessionStartNotifier || !config.HasWebhookFor(NotifierEvent.SessionStart))
         {
             return;
         }
@@ -65,7 +65,7 @@ public class SessionStartNotifier : IEventConsumer<SessionStartedEventArgs>
                 eventArgs.Argument.DeviceName ?? "Unknown");
 
             var message = SessionStartTemplate.CreateMessage(eventArgs.Argument, config);
-            await _sender.SendPostToWebhook(config.WebhookUrl, message).ConfigureAwait(false);
+            await _sender.SendAsync(NotifierEvent.SessionStart, message).ConfigureAwait(false);
         }
         catch (Exception ex)
         {

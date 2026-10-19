@@ -105,7 +105,7 @@ public class LyricDownloadFailureNotifier : IHostedService
     private async Task FlushAsync()
     {
         var config = Plugin.Config;
-        if (!config.EnablePlugin || !config.LyricDownloadFailureNotifier || string.IsNullOrWhiteSpace(config.WebhookUrl))
+        if (!config.EnablePlugin || !config.LyricDownloadFailureNotifier || !config.HasWebhookFor(NotifierEvent.LyricDownloadFailure))
         {
             while (_queue.TryDequeue(out _))
             {
@@ -133,7 +133,7 @@ public class LyricDownloadFailureNotifier : IHostedService
                 try
                 {
                     var message = LyricDownloadFailureTemplate.CreateMessage(e, config);
-                    await _sender.SendPostToWebhook(config.WebhookUrl, message).ConfigureAwait(false);
+                    await _sender.SendAsync(NotifierEvent.LyricDownloadFailure, message).ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {
@@ -170,7 +170,7 @@ public class LyricDownloadFailureNotifier : IHostedService
                 ]
             };
 
-            await _sender.SendPostToWebhook(config.WebhookUrl, summary).ConfigureAwait(false);
+            await _sender.SendAsync(NotifierEvent.LyricDownloadFailure, summary).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
