@@ -34,9 +34,11 @@ namespace Jellyfin.Plugin.DiscordNotifier.Controllers
         /// Tests the Discord webhook by sending a test message.
         /// </summary>
         /// <param name="webhookUrl">The Discord webhook URL to test.</param>
+        /// <param name="username">Optional bot name override for this webhook.</param>
+        /// <param name="avatarUrl">Optional avatar URL override for this webhook.</param>
         /// <returns>A response indicating whether the test was successful.</returns>
         [HttpGet]
-        public async Task<ActionResult<string>> Get([FromQuery] string webhookUrl)
+        public async Task<ActionResult<string>> Get([FromQuery] string webhookUrl, [FromQuery] string? username = null, [FromQuery] string? avatarUrl = null)
         {
             if (string.IsNullOrWhiteSpace(webhookUrl)
                 || !DiscordSender.IsValidDiscordWebhookUrl(webhookUrl))
@@ -60,7 +62,7 @@ namespace Jellyfin.Plugin.DiscordNotifier.Controllers
                     }
                 ]
             };
-            bool result = await _sender.SendPostToWebhook(webhookUrl, testMessage).ConfigureAwait(false);
+            bool result = await _sender.SendPostToWebhook(webhookUrl, testMessage, username, avatarUrl).ConfigureAwait(false);
 
             if (result)
             {

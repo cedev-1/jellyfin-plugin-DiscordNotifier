@@ -2,6 +2,185 @@ export default function (view) {
     console.log('Initializing DiscordNotifierConfig...');
     const pluginUniqueId = '8f3c85d3-19cf-4e50-a57e-7d2ce3c0c413';
 
+    const webhookGroups = [
+        {
+            id: 'Content', label: 'Content', events: [
+                { id: 'ItemAdded', label: 'Content added' },
+                { id: 'ItemDeleted', label: 'Content deleted' },
+                { id: 'ItemUpdated', label: 'Content updated' }
+            ]
+        },
+        {
+            id: 'Playback', label: 'Playback & sessions', events: [
+                { id: 'PlaybackStart', label: 'Playback started' },
+                { id: 'PlaybackStop', label: 'Playback stopped' },
+                { id: 'PlaybackProgress', label: 'Playback progress' },
+                { id: 'SessionStart', label: 'Session started' },
+                { id: 'SessionEnded', label: 'Session ended' },
+                { id: 'UserDataSaved', label: 'Watch status updated' }
+            ]
+        },
+        {
+            id: 'Security', label: 'Users & security', events: [
+                { id: 'UserCreated', label: 'User created' },
+                { id: 'UserDeleted', label: 'User deleted' },
+                { id: 'UserUpdated', label: 'User updated' },
+                { id: 'UserLockedOut', label: 'User locked out' },
+                { id: 'UserPasswordChanged', label: 'Password changed' },
+                { id: 'AuthenticationSuccess', label: 'Login success' },
+                { id: 'AuthenticationFailure', label: 'Login failure' }
+            ]
+        },
+        {
+            id: 'System', label: 'Server, tasks & plugins', events: [
+                { id: 'ServerStarted', label: 'Server started' },
+                { id: 'PendingRestart', label: 'Restart pending' },
+                { id: 'TaskCompleted', label: 'Scheduled task completed' },
+                { id: 'PluginInstalled', label: 'Plugin installed' },
+                { id: 'PluginUpdated', label: 'Plugin updated' },
+                { id: 'PluginUninstalled', label: 'Plugin uninstalled' },
+                { id: 'PluginInstallationFailed', label: 'Plugin installation failed' },
+                { id: 'PluginInstallationCancelled', label: 'Plugin installation cancelled' },
+                { id: 'PluginInstalling', label: 'Plugin installing' }
+            ]
+        },
+        {
+            id: 'Failures', label: 'Subtitle & lyric failures', events: [
+                { id: 'SubtitleDownloadFailure', label: 'Subtitle download failure' },
+                { id: 'LyricDownloadFailure', label: 'Lyric download failure' }
+            ]
+        }
+    ];
+
+    const allWebhookEvents = webhookGroups.flatMap(g => g.events.map(e => e.id));
+
+    function escapeAttr(value) {
+        return String(value || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+    }
+
+    // Keeps a group's master checkbox in sync with its events (checked / unchecked / indeterminate).
+    function syncGroupToggle(group) {
+        const events = Array.from(group.querySelectorAll('.whEvent'));
+        const checked = events.filter(cb => cb.checked).length;
+        const master = group.querySelector('.whGroupToggle');
+        master.checked = checked === events.length;
+        master.indeterminate = checked > 0 && checked < events.length;
+        group.querySelector('.whGroupCount').textContent = `${checked}/${events.length}`;
+    }
+
+    function setCardExpanded(card, expanded) {
+        card.querySelector(".whBody").style.display = expanded ? "" : "none";
+        card.querySelector(".whCardChevron").style.transform = expanded ? "rotate(90deg)" : "";
+    }
+
+    // Refreshes the one-line summary shown when the card is collapsed.
+    function updateCardSummary(card) {
+        const name = card.querySelector(".whName").value.trim();
+        const url = card.querySelector(".whUrl").value.trim();
+        const count = card.querySelectorAll(".whEvent:checked").length;
+        const tail = url ? "…" + url.slice(-6) : "no URL";
+        card.querySelector(".whCardTitle").textContent = name || "Unnamed webhook";
+        card.querySelector(".whCardInfo").textContent = `${count}/${allWebhookEvents.length} events · ${tail}`;
+    }
+
+    function addWebhookCard(webhook, expanded) {
+        const w = webhook || { Name: '', Url: '', Username: '', AvatarUrl: '', Events: allWebhookEvents };
+        const selected = w.Events || [];
+        const card = document.createElement('div');
+        card.className = 'webhookCard';
+        card.style.cssText = 'border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 1em; margin-bottom: 1em;';
+        card.innerHTML = `
+            <div class="whCardHeader" style="display: flex; align-items: center; gap: 0.75em; cursor: pointer; user-select: none;">
+                <span class="whCardChevron whChevron">▶</span>
+                <strong class="whCardTitle"></strong>
+                <span class="whCardInfo fieldDescription" style="margin: 0;"></span>
+            </div>
+            <div class="whBody" style="margin-top: 1em;">
+            <div class="inputContainer">
+                <label class="inputLabel inputLabelUnfocused">Name</label>
+                <input class="whName" type="text" is="emby-input" placeholder="e.g. New content" value="${escapeAttr(w.Name)}" />
+            </div>
+            <div class="inputContainer">
+                <label class="inputLabel inputLabelUnfocused">Webhook URL</label>
+                <input class="whUrl" type="text" is="emby-input" placeholder="https://discord.com/api/webhooks/..." value="${escapeAttr(w.Url)}" />
+                <div class="fieldDescription">Create one in Discord server settings under Integrations.</div>
+            </div>
+            <div class="inputContainer">
+                <label class="inputLabel inputLabelUnfocused">Bot Display Name (optional)</label>
+                <input class="whUsername" type="text" is="emby-input" placeholder="Uses the global name when empty" value="${escapeAttr(w.Username)}" />
+            </div>
+            <div class="inputContainer">
+                <label class="inputLabel inputLabelUnfocused">Bot Avatar URL (optional)</label>
+                <input class="whAvatar" type="text" is="emby-input" placeholder="Uses the global avatar when empty" value="${escapeAttr(w.AvatarUrl)}" />
+            </div>
+            <div class="fieldDescription" style="margin-bottom: 0.5em;">Receives (tick a section for everything in it, or expand it to pick individual events):</div>
+            ${webhookGroups.map(g => `
+                <details class="whGroup" style="margin-bottom: 0.4em;">
+                    <summary class="whSummary">
+                        <span class="whChevron">▶</span>
+                        <label class="emby-checkbox-label" style="margin: 0;" onclick="event.stopPropagation();">
+                            <input class="whGroupToggle" type="checkbox" is="emby-checkbox" />
+                            <span>${g.label}</span>
+                        </label>
+                        <span class="whGroupCount fieldDescription" style="margin: 0;"></span>
+                    </summary>
+                    <div style="padding-left: 2em;">
+                        ${g.events.map(e => `
+                            <div class="checkboxContainer checkboxContainer-withDescription">
+                                <label class="emby-checkbox-label">
+                                    <input class="whEvent" data-event="${e.id}" type="checkbox" is="emby-checkbox" ${selected.includes(e.id) ? 'checked' : ''} />
+                                    <span>${e.label}</span>
+                                </label>
+                            </div>`).join('')}
+                    </div>
+                </details>`).join('')}
+            <div style="display: flex; gap: 1em; margin-top: 1em;">
+                <button type="button" is="emby-button" class="raised button emby-button whTest"><span>Test webhook</span></button>
+                <button type="button" is="emby-button" class="raised button emby-button whRemove"><span>Remove</span></button>
+                <button type="button" is="emby-button" class="raised button emby-button whSave"><span>Save</span></button>
+            </div>
+            </div>`;
+
+        card.querySelectorAll('.whGroup').forEach(group => {
+            syncGroupToggle(group);
+            group.querySelector('.whGroupToggle').addEventListener('change', function () {
+                group.querySelectorAll('.whEvent').forEach(cb => { cb.checked = this.checked; });
+                syncGroupToggle(group);
+            });
+            group.querySelectorAll('.whEvent').forEach(cb => cb.addEventListener('change', () => syncGroupToggle(group)));
+        });
+        card.querySelector('.whTest').addEventListener('click', function () { testWebhook(card, this); });
+        card.querySelector('.whRemove').addEventListener('click', function () { card.remove(); });
+        card.querySelector('.whSave').addEventListener('click', () => saveConfig());
+        card.querySelector('.whCardHeader').addEventListener('click', () => setCardExpanded(card, card.querySelector('.whBody').style.display === 'none'));
+        card.addEventListener('input', () => updateCardSummary(card));
+        card.addEventListener('change', () => updateCardSummary(card));
+        updateCardSummary(card);
+        setCardExpanded(card, !!expanded);
+        document.querySelector('#webhookList').appendChild(card);
+    }
+
+    function renderWebhooks(config) {
+        const list = document.querySelector('#webhookList');
+        list.innerHTML = '';
+        let webhooks = config.Webhooks || [];
+        if (webhooks.length === 0 && config.WebhookUrl) {
+            // Legacy single-webhook config: show it as one webhook receiving everything.
+            webhooks = [{ Name: 'Default', Url: config.WebhookUrl, Username: '', AvatarUrl: '', Events: allWebhookEvents }];
+        }
+        webhooks.forEach(w => addWebhookCard(w, false));
+    }
+
+    function collectWebhooks() {
+        return Array.from(document.querySelectorAll('#webhookList .webhookCard')).map(card => ({
+            Name: card.querySelector('.whName').value.trim(),
+            Url: card.querySelector('.whUrl').value.trim(),
+            Username: card.querySelector('.whUsername').value.trim(),
+            AvatarUrl: card.querySelector('.whAvatar').value.trim(),
+            Events: Array.from(card.querySelectorAll('.whEvent:checked')).map(cb => cb.dataset.event)
+        })).filter(w => w.Url);
+    }
+
     async function loadConfig() {
         console.log('Loading configuration...');
         Dashboard.showLoadingMsg();
@@ -11,7 +190,7 @@ export default function (view) {
             console.log('Received config:', config);
 
             document.querySelector('#EnablePlugin').checked = config.EnablePlugin !== false;
-            document.querySelector('#webhookUrl').value = config.WebhookUrl || '';
+            renderWebhooks(config);
             document.querySelector('#serverUrl').value = config.ServerUrl || '';
             document.querySelector('#serverName').value = config.ServerName || '';
             document.querySelector('#webhookUsername').value = config.WebhookUsername || '';
@@ -84,7 +263,8 @@ export default function (view) {
             const config = await ApiClient.getPluginConfiguration(pluginUniqueId);
 
             config.EnablePlugin = document.querySelector('#EnablePlugin').checked;
-            config.WebhookUrl = document.querySelector('#webhookUrl').value.trim();
+            config.Webhooks = collectWebhooks();
+            config.WebhookUrl = '';
             config.ServerUrl = document.querySelector('#serverUrl').value.trim();
             config.ServerName = document.querySelector('#serverName').value.trim();
             config.WebhookUsername = document.querySelector('#webhookUsername').value.trim();
@@ -139,6 +319,7 @@ export default function (view) {
             console.log('Saving config:', config);
 
             await ApiClient.updatePluginConfiguration(pluginUniqueId, config);
+            renderWebhooks(config);
 
             console.log('Configuration saved successfully');
             Dashboard.alert('Configuration saved successfully!');
@@ -151,13 +332,12 @@ export default function (view) {
         }
     }
 
-    function testWebhook() {
+    function testWebhook(card, button) {
         console.log('Testing webhook...');
-        const button = this;
         const originalText = button.querySelector('span').textContent;
         button.disabled = true;
 
-        const webhookUrl = document.querySelector('#webhookUrl').value.trim();
+        const webhookUrl = card.querySelector('.whUrl').value.trim();
 
         if (!webhookUrl) {
             Dashboard.alert('Please enter a webhook URL first');
@@ -165,7 +345,7 @@ export default function (view) {
             return;
         }
 
-        if (!webhookUrl.startsWith('https://discord.com/api/webhooks/')) {
+        if (!/^https:\/\/(discord|discordapp)\.com\/api\/webhooks\//.test(webhookUrl)) {
             Dashboard.alert('Please enter a valid Discord webhook URL');
             button.disabled = false;
             return;
@@ -173,10 +353,14 @@ export default function (view) {
 
         button.querySelector('span').textContent = 'Testing...';
 
-        const encodedUrl = encodeURIComponent(webhookUrl);
+        const params = new URLSearchParams({ webhookUrl });
+        const username = card.querySelector('.whUsername').value.trim();
+        const avatarUrl = card.querySelector('.whAvatar').value.trim();
+        if (username) params.set('username', username);
+        if (avatarUrl) params.set('avatarUrl', avatarUrl);
 
         ApiClient.ajax({
-            url: ApiClient.getUrl(`DiscordNotifierApi/TestNotifier?webhookUrl=${encodedUrl}`),
+            url: ApiClient.getUrl(`DiscordNotifierApi/TestNotifier?${params.toString()}`),
             type: 'GET'
         })
         .then(() => {
@@ -587,7 +771,7 @@ export default function (view) {
 
     view.addEventListener('viewshow', loadConfig);
     document.getElementById('saveButton').addEventListener('click', saveConfig);
-    document.getElementById('testButton').addEventListener('click', testWebhook);
+    document.getElementById('addWebhookButton').addEventListener('click', function () { addWebhookCard(undefined, true); });
     document.getElementById('previewToggle').addEventListener('toggle', function() {
         if (this.open) {
             renderPreview();

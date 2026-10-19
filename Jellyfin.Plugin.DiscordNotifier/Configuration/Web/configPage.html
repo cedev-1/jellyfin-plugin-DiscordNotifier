@@ -11,6 +11,12 @@
          class="page type-interior pluginConfigurationPage"
          data-require="emby-input,emby-button,emby-select,emby-checkbox"
          data-controller="__plugin/DiscordNotifierConfig">
+        <style>
+            .whSummary { cursor: pointer; user-select: none; padding: 0.3em 0; display: flex; align-items: center; gap: 0.5em; list-style: none; }
+            .whSummary::-webkit-details-marker { display: none; }
+            .whChevron { font-size: 0.7em; opacity: 0.7; transition: transform 0.15s; display: inline-block; width: 1em; }
+            .whGroup[open] > .whSummary .whChevron { transform: rotate(90deg); }
+        </style>
         <div data-role="content">
             <div class="content-primary">
                 <div class="sectionTitleContainer flex align-items-center">
@@ -35,10 +41,18 @@
                     </div>
 
                     <div class="inputContainer">
-                        <label class="inputLabel inputLabelUnfocused" for="webhookUrl">Webhook URL</label>
-                        <input id="webhookUrl" name="webhookUrl" type="text" is="emby-input" />
-                        <div class="fieldDescription">Your Discord webhook URL. Create one in Discord server settings under Integrations.</div>
+                        <label class="inputLabel">Webhooks</label>
+                        <div class="fieldDescription">Add one or more Discord webhooks and choose which events each one receives, by section or one by one. An event with no webhook is not sent anywhere.</div>
                     </div>
+
+                    <div id="webhookList"></div>
+
+                    <div>
+                        <button id="addWebhookButton" type="button" is="emby-button" class="raised button block emby-button">
+                            <span>Add webhook</span>
+                        </button>
+                    </div>
+
 
                     <div class="inputContainer">
                         <label class="inputLabel inputLabelUnfocused" for="serverUrl">Jellyfin Server URL</label>
@@ -50,12 +64,6 @@
                         <label class="inputLabel inputLabelUnfocused" for="serverName">Server Name</label>
                         <input id="serverName" name="serverName" type="text" is="emby-input" placeholder="My Jellyfin" />
                         <div class="fieldDescription">Shown in notification footers. Leave empty for default.</div>
-                    </div>
-
-                    <div>
-                        <button id="testButton" type="button" is="emby-button" class="raised button block emby-button">
-                            <span>Test webhook</span>
-                        </button>
                     </div>
 
                     <!-- ═══════════════════════════════════════════ -->
@@ -73,7 +81,7 @@
                             <div class="inputContainer">
                                 <label class="inputLabel inputLabelUnfocused" for="webhookUsername">Bot Display Name</label>
                                 <input id="webhookUsername" name="webhookUsername" type="text" is="emby-input" placeholder="Jellyfin" />
-                                <div class="fieldDescription">Custom name for the webhook bot in Discord. <strong>Cannot contain "discord"</strong> (API restriction).</div>
+                                <div class="fieldDescription">Default name for the webhook bot in Discord (can be overridden per webhook). <strong>Cannot contain "discord"</strong> (API restriction).</div>
                                 <div id="webhookUsernameWarning" style="color: #e74c3c; font-size: 0.85em; margin-top: 4px; display: none;">Discord does not allow "discord" in the bot name.</div>
                             </div>
                             <div class="inputContainer">
