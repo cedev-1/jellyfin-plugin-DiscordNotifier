@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using MediaBrowser.Model.Plugins;
 
 namespace Jellyfin.Plugin.DiscordNotifier.Configuration
@@ -63,8 +66,11 @@ namespace Jellyfin.Plugin.DiscordNotifier.Configuration
         /// <summary>Gets or sets a value indicating whether the plugin is enabled.</summary>
         public bool EnablePlugin { get; set; }
 
-        /// <summary>Gets or sets the Discord webhook URL.</summary>
+        /// <summary>Gets or sets the legacy single Discord webhook URL. Used for every event when <see cref="Webhooks"/> is empty.</summary>
         public string WebhookUrl { get; set; } = string.Empty;
+
+        /// <summary>Gets or sets the configured webhooks, each subscribed to a set of notification events.</summary>
+        public List<WebhookConfig> Webhooks { get; set; } = new();
 
         /// <summary>Gets or sets the display name override for the Discord webhook bot.</summary>
         public string WebhookUsername { get; set; } = string.Empty;
@@ -197,5 +203,32 @@ namespace Jellyfin.Plugin.DiscordNotifier.Configuration
 
         /// <summary>Gets or sets a value indicating whether IP addresses are included in notification embeds (login, session). Default false for GDPR.</summary>
         public bool IncludeIpAddresses { get; set; }
+
+        /// <summary>
+        /// Gets the webhooks that should receive notifications of the given event.
+        /// Falls back to the legacy <see cref="WebhookUrl"/> (all events) when no webhook list is configured.
+        /// </summary>
+        /// <param name="notifierEvent">The notification event.</param>
+        /// <returns>The matching webhooks, possibly empty.</returns>
+        public IReadOnlyList<WebhookConfig> GetWebhooksFor(NotifierEvent notifierEvent)
+        {
+            if (Webhooks.Count == 0)
+            {
+                return string.IsNullOrWhiteSpace(WebhookUrl)
+                    ? Array.Empty<WebhookConfig>()
+                    : new[] { new WebhookConfig { Url = WebhookUrl } };
+            }
+
+            var name = notifierEvent.ToString();
+            return Webhooks
+                .Where(w => !string.IsNullOrWhiteSpace(w.Url)
+                    && w.Events.Contains(name, StringComparer.OrdinalIgnoreCase))
+                .ToList();
+        }
+
+        /// <summary>Gets a value indicating whether at least one webhook receives the given event.</summary>
+        /// <param name="notifierEvent">The notification event.</param>
+        /// <returns>True if a notification of this event has somewhere to go.</returns>
+        public bool HasWebhookFor(NotifierEvent notifierEvent) => GetWebhooksFor(notifierEvent).Count > 0;
     }
 }
