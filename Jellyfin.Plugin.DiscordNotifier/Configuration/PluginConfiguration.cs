@@ -81,6 +81,12 @@ namespace Jellyfin.Plugin.DiscordNotifier.Configuration
         /// <summary>Gets or sets the icon URL shown in notification footers. Empty uses the Jellyfin logo.</summary>
         public string FooterIconUrl { get; set; } = string.Empty;
 
+        /// <summary>Gets or sets the hex colour applied to every embed. Empty keeps each event's own colour.</summary>
+        public string EmbedColor { get; set; } = string.Empty;
+
+        /// <summary>Gets or sets per-event embed colours. Takes precedence over <see cref="EmbedColor"/>.</summary>
+        public List<EmbedColorConfig> EmbedColors { get; set; } = new();
+
         /// <summary>Gets or sets the Jellyfin server URL.</summary>
         public string ServerUrl { get; set; } = string.Empty;
 
@@ -233,5 +239,37 @@ namespace Jellyfin.Plugin.DiscordNotifier.Configuration
         /// <param name="notifierEvent">The notification event.</param>
         /// <returns>True if a notification of this event has somewhere to go.</returns>
         public bool HasWebhookFor(NotifierEvent notifierEvent) => GetWebhooksFor(notifierEvent).Count > 0;
+
+        /// <summary>
+        /// Gets the custom embed colour for the given event: the per-event colour if set, else the global one.
+        /// </summary>
+        /// <param name="notifierEvent">The notification event, or null for the global colour only.</param>
+        /// <returns>The colour as an integer, or null to keep the template's own colour.</returns>
+        public int? GetEmbedColorFor(NotifierEvent? notifierEvent)
+        {
+            if (notifierEvent is not null)
+            {
+                var name = notifierEvent.Value.ToString();
+                var custom = EmbedColors.FirstOrDefault(c => string.Equals(c.Event, name, StringComparison.OrdinalIgnoreCase));
+                if (custom is not null && TryParseHexColor(custom.Color, out var eventColor))
+                {
+                    return eventColor;
+                }
+            }
+
+            return TryParseHexColor(EmbedColor, out var globalColor) ? globalColor : null;
+        }
+
+        /// <summary>Parses a <c>#RRGGBB</c> (or <c>RRGGBB</c>) hex colour.</summary>
+        /// <param name="value">The hex string.</param>
+        /// <param name="color">The parsed colour.</param>
+        /// <returns>True if the value is a valid colour.</returns>
+        public static bool TryParseHexColor(string? value, out int color)
+        {
+            color = 0;
+            var hex = value?.Trim().TrimStart('#');
+            return hex is { Length: 6 }
+                && int.TryParse(hex, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out color);
+        }
     }
 }

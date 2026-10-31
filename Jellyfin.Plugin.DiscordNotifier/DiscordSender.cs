@@ -72,6 +72,8 @@ namespace Jellyfin.Plugin.DiscordNotifier
                 return true;
             }
 
+            ApplyEmbedColor(payload, config.GetEmbedColorFor(notifierEvent));
+
             // Serialize one body per target up front: the payload is shared and branding is applied in place.
             var originalUsername = payload.Username;
             var originalAvatarUrl = payload.AvatarUrl;
@@ -117,7 +119,21 @@ namespace Jellyfin.Plugin.DiscordNotifier
             ArgumentNullException.ThrowIfNull(payload);
 
             ApplyBranding(payload, Plugin.Config, new WebhookConfig { Username = username ?? string.Empty, AvatarUrl = avatarUrl ?? string.Empty });
+            ApplyEmbedColor(payload, Plugin.Config.GetEmbedColorFor(null));
             return await PostJsonAsync(webhookUrl, JsonSerializer.Serialize(payload)).ConfigureAwait(false);
+        }
+
+        private static void ApplyEmbedColor(Models.DiscordWebhookPayload payload, int? color)
+        {
+            if (color is null)
+            {
+                return;
+            }
+
+            foreach (var embed in payload.Embeds)
+            {
+                embed.Color = color.Value;
+            }
         }
 
         private static void ApplyBranding(Models.DiscordWebhookPayload payload, PluginConfiguration config, WebhookConfig webhook)

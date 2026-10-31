@@ -54,6 +54,109 @@ export default function (view) {
 
     const allWebhookEvents = webhookGroups.flatMap(g => g.events.map(e => e.id));
 
+    // Main colour each event uses on the server when no custom colour is set (some also vary by status).
+    const defaultEmbedColors = {
+        ItemAdded: '#9B59B6', ItemDeleted: '#E74C3C', ItemUpdated: '#3498DB',
+        PlaybackStart: '#2ECC71', PlaybackStop: '#2ECC71', PlaybackProgress: '#9B59B6',
+        SessionStart: '#2ECC71', SessionEnded: '#95A5A6', UserDataSaved: '#2ECC71',
+        UserCreated: '#4C8BF5', UserDeleted: '#E74C3C', UserUpdated: '#3498DB', UserLockedOut: '#E74C3C',
+        UserPasswordChanged: '#E67E22', AuthenticationSuccess: '#2ECC71', AuthenticationFailure: '#E74C3C',
+        ServerStarted: '#2ECC71', PendingRestart: '#E67E22', TaskCompleted: '#2ECC71',
+        PluginInstalled: '#2ECC71', PluginUpdated: '#3498DB', PluginUninstalled: '#E67E22',
+        PluginInstallationFailed: '#E74C3C', PluginInstallationCancelled: '#95A5A6', PluginInstalling: '#3498DB',
+        SubtitleDownloadFailure: '#E74C3C', LyricDownloadFailure: '#E74C3C'
+    };
+
+    // Returns "#RRGGBB" for a valid hex colour (with or without "#"), "" for an empty value, null if invalid.
+    function normalizeHex(value) {
+        const hex = String(value || '').trim().replace(/^#/, '');
+        if (!hex) return '';
+        return /^[0-9a-fA-F]{6}$/.test(hex) ? '#' + hex.toUpperCase() : null;
+    }
+
+    // Wires a colour row: picker and hex field stay in sync, Reset clears the custom colour.
+    function bindColorRow(row, fallback) {
+        const picker = row.querySelector('.ecPicker');
+        const hexInput = row.querySelector('.ecHex');
+        const sync = () => {
+            const hex = normalizeHex(hexInput.value);
+            picker.value = (hex || fallback()).toLowerCase();
+            hexInput.style.borderColor = hex === null ? '#e74c3c' : '';
+            // Greyed out and inert while the row already uses its default colour.
+            const reset = row.querySelector('.ecReset');
+            reset.disabled = !hexInput.value.trim();
+            reset.style.opacity = reset.disabled ? '0.25' : '0.8';
+            reset.style.cursor = reset.disabled ? 'default' : 'pointer';
+        };
+        picker.addEventListener('input', () => { hexInput.value = picker.value.toUpperCase(); sync(); renderPreview(); });
+        hexInput.addEventListener('input', () => { sync(); renderPreview(); });
+        row.querySelector('.ecReset').addEventListener('click', () => { hexInput.value = ''; sync(); renderPreview(); });
+        row.syncColor = sync;
+        sync();
+    }
+
+    function renderEmbedColors(config) {
+        const list = document.querySelector('#embedColorList');
+        const custom = {};
+        (config.EmbedColors || []).forEach(c => { custom[c.Event] = c.Color; });
+
+        list.innerHTML = webhookGroups.map(g => `
+            <div class="fieldDescription" style="margin: 0.75em 0 0.4em; font-weight: 600;">${g.label}</div>
+            ${g.events.map(e => `
+                <div class="ecRow ecEventRow" data-event="${e.id}" style="display: flex; align-items: center; gap: 0.75em; margin-bottom: 0.4em;">
+                    <input class="ecPicker" type="color" style="width: 2.5em; height: 2em; padding: 0; border: none; background: none; cursor: pointer;" />
+                    <input class="ecHex emby-input" type="text" maxlength="7" placeholder="${defaultEmbedColors[e.id]}" value="${escapeAttr(custom[e.id])}" style="width: 10em;" />
+                    <span>${e.label}</span>
+                    <button type="button" class="ecReset" title="Reset to default" aria-label="Reset to default" style="margin: 0 0 0 -0.4em; padding: 0 0.25em; border: none; background: none; color: inherit; opacity: 0.6; font-size: 1.2em; line-height: 1; cursor: pointer;">&#8634;</button>
+                </div>`).join('')}`).join('');
+
+        // An event without its own colour falls back to the "All events" colour, then to its default.
+        const globalHex = () => normalizeHex(document.querySelector('#embedColor').value);
+        list.querySelectorAll('.ecEventRow').forEach(row => {
+            bindColorRow(row, () => globalHex() || defaultEmbedColors[row.dataset.event]);
+        });
+
+        const globalRow = document.querySelector('#embedColor').closest('.ecRow');
+        document.querySelector('#embedColor').value = config.EmbedColor || '';
+        if (!globalRow.syncColor) {
+            bindColorRow(globalRow, () => '#9B59B6');
+            document.querySelector('#embedColor').addEventListener('input', syncEventColorRows);
+            globalRow.querySelector('.ecPicker').addEventListener('input', syncEventColorRows);
+            globalRow.querySelector('.ecReset').addEventListener('click', syncEventColorRows);
+        }
+        globalRow.syncColor();
+        syncEventColorRows();
+    }
+
+    function syncEventColorRows() {
+        document.querySelectorAll('#embedColorList .ecEventRow').forEach(row => row.syncColor());
+    }
+
+    // Returns the colour settings, or null (after alerting) if a field holds an invalid value.
+    function collectEmbedColors() {
+        const globalColor = normalizeHex(document.querySelector('#embedColor').value);
+        const rows = Array.from(document.querySelectorAll('#embedColorList .ecEventRow'));
+        const invalid = rows.filter(row => normalizeHex(row.querySelector('.ecHex').value) === null);
+        if (globalColor === null || invalid.length > 0) {
+            Dashboard.alert('Invalid embed colour. Use a hex code like #9B59B6, or leave the field empty.');
+            return null;
+        }
+
+        return {
+            EmbedColor: globalColor,
+            EmbedColors: rows
+                .map(row => ({ Event: row.dataset.event, Color: normalizeHex(row.querySelector('.ecHex').value) }))
+                .filter(c => c.Color)
+        };
+    }
+
+    // Colour the preview shows: the custom colour for the event (or the global one), else the sample's own.
+    function previewColor(eventId, sampleColor) {
+        const row = eventId && document.querySelector(`#embedColorList .ecEventRow[data-event="${eventId}"]`);
+        const custom = (row && normalizeHex(row.querySelector('.ecHex').value)) || normalizeHex(document.querySelector('#embedColor').value);
+        return custom || '#' + sampleColor.toString(16).padStart(6, '0');
+    }
+
     function escapeAttr(value) {
         return String(value || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
     }
@@ -196,6 +299,7 @@ export default function (view) {
             document.querySelector('#webhookUsername').value = config.WebhookUsername || '';
             document.querySelector('#webhookAvatarUrl').value = config.WebhookAvatarUrl || '';
             document.querySelector('#footerIconUrl').value = config.FooterIconUrl || '';
+            renderEmbedColors(config);
 
             document.querySelector('#ItemAddedNotifier').checked = config.ItemAddedNotifier !== false;
             document.querySelector('#ItemAddedGroupingDelay').value = config.ItemAddedGroupingDelayMinutes || 5;
@@ -258,6 +362,9 @@ export default function (view) {
         console.log('Saving configuration...');
         if (e) e.preventDefault();
 
+        const embedColors = collectEmbedColors();
+        if (!embedColors) return;
+
         Dashboard.showLoadingMsg();
 
         try {
@@ -271,6 +378,8 @@ export default function (view) {
             config.WebhookUsername = document.querySelector('#webhookUsername').value.trim();
             config.WebhookAvatarUrl = document.querySelector('#webhookAvatarUrl').value.trim();
             config.FooterIconUrl = document.querySelector('#footerIconUrl').value.trim();
+            config.EmbedColor = embedColors.EmbedColor;
+            config.EmbedColors = embedColors.EmbedColors;
 
             config.ItemAddedNotifier = document.querySelector('#ItemAddedNotifier').checked;
             config.ItemAddedGroupingDelayMinutes = parseInt(document.querySelector('#ItemAddedGroupingDelay').value, 10) || 5;
@@ -713,6 +822,25 @@ export default function (view) {
         }
     };
 
+    // Notifier event each preview sample belongs to, for custom colours.
+    const previewEvents = {
+        newMovie: 'ItemAdded', newSeriesGrouped: 'ItemAdded', newAlbumGrouped: 'ItemAdded',
+        contentDeleted: 'ItemDeleted', contentUpdated: 'ItemUpdated',
+        subtitleFailure: 'SubtitleDownloadFailure', lyricFailure: 'LyricDownloadFailure',
+        watchStatus: 'UserDataSaved', watchStatusBatch: 'UserDataSaved',
+        playbackStart: 'PlaybackStart', playbackStartDetailed: 'PlaybackStart',
+        playbackStop: 'PlaybackStop', playbackProgress: 'PlaybackProgress',
+        userCreated: 'UserCreated', userDeleted: 'UserDeleted', loginSuccess: 'AuthenticationSuccess',
+        loginFailure: 'AuthenticationFailure', userLockedOut: 'UserLockedOut',
+        passwordChanged: 'UserPasswordChanged', userUpdated: 'UserUpdated',
+        sessionStart: 'SessionStart', sessionEnded: 'SessionEnded',
+        taskCompleted: 'TaskCompleted', taskFailed: 'TaskCompleted',
+        pendingRestart: 'PendingRestart', serverStarted: 'ServerStarted',
+        pluginInstalled: 'PluginInstalled', pluginUpdated: 'PluginUpdated', pluginUninstalled: 'PluginUninstalled',
+        pluginInstallFailed: 'PluginInstallationFailed', pluginInstallCancelled: 'PluginInstallationCancelled',
+        pluginInstalling: 'PluginInstalling'
+    };
+
     const footerIconUrl = 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fstatic0.xdaimages.com%2Fwordpress%2Fwp-content%2Fuploads%2F2024%2F02%2Fjellyfin-logo.png%3Fq%3D70%26fit%3Dcontain%26w%3D420%26dpr%3D1&f=1&nofb=1&ipt=403502d7a0586532bfb11842ad227f3212229625ccbf001cd1f60dc0abf41465';
 
     function renderPreview() {
@@ -735,7 +863,7 @@ export default function (view) {
 
         // Embed border color
         const previewEmbed = document.getElementById('previewEmbed');
-        previewEmbed.style.borderLeftColor = '#' + data.color.toString(16).padStart(6, '0');
+        previewEmbed.style.borderLeftColor = previewColor(previewEvents[eventKey], data.color);
 
         // Title & description — convert markdown bold to HTML
         const titleEl = document.getElementById('previewEmbedTitle');

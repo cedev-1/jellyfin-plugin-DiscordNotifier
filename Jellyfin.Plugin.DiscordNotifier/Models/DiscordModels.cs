@@ -85,9 +85,9 @@ public sealed class DiscordEmbed
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string? Url { get; init; }
 
-    /// <summary>Gets the embed color (decimal integer).</summary>
+    /// <summary>Gets or sets the embed color (decimal integer). Settable so a configured colour can be applied before sending.</summary>
     [JsonPropertyName("color")]
-    public int Color { get; init; }
+    public int Color { get; set; }
 
     /// <summary>Gets the list of fields.</summary>
     [JsonPropertyName("fields")]

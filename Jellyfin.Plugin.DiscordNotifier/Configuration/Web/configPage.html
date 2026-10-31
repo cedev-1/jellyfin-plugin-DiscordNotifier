@@ -102,6 +102,20 @@
                         <div class="fieldDescription">Small icon shown next to the server name in notification footers. Leave empty for the Jellyfin logo.</div>
                     </div>
 
+                    <details id="embedColorsToggle" style="margin: 0.25em 0 1em 0; padding: 0.5em 0.75em; border-left: 3px solid #00a4dc;">
+                        <summary style="cursor: pointer; font-size: 0.9em; opacity: 0.75; user-select: none;">Embed colours</summary>
+                        <div style="margin-top: 0.75em;">
+                            <div class="fieldDescription" style="margin-bottom: 0.75em;">Colour of the bar on the left of each notification. Leave a field empty to keep the default. A custom colour replaces the status-based colours too (e.g. green / red for a successful / failed task).</div>
+                            <div class="ecRow" style="display: flex; align-items: center; gap: 0.75em; margin-bottom: 1em;">
+                                <input id="embedColorPicker" class="ecPicker" type="color" style="width: 2.5em; height: 2em; padding: 0; border: none; background: none; cursor: pointer;" />
+                                <input id="embedColor" class="ecHex emby-input" type="text" maxlength="7" placeholder="Per-event default" style="width: 10em;" />
+                                <strong>All events</strong>
+                                <button type="button" class="ecReset" title="Reset to default" aria-label="Reset to default" style="margin: 0 0 0 -0.4em; padding: 0 0.25em; border: none; background: none; color: inherit; opacity: 0.6; font-size: 1.2em; line-height: 1; cursor: pointer;">&#8634;</button>
+                            </div>
+                            <div id="embedColorList"></div>
+                        </div>
+                    </details>
+
                     <!-- ═══════════════════════════════════════════ -->
                     <!-- NOTIFICATION PREVIEW                       -->
                     <!-- ═══════════════════════════════════════════ -->
