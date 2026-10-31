@@ -593,7 +593,7 @@ export default function (view) {
         playbackStart: {
             title: 'Playback Started',
             description: '**john_doe** started playing **Interstellar (2014)**',
-            color: 0x9B59B6,
+            color: 0x2ECC71,
             thumbnail: true,
             fields: [
                 { name: 'User', value: 'john_doe', inline: true },
@@ -604,7 +604,7 @@ export default function (view) {
         playbackStartDetailed: {
             title: 'Playback Started',
             description: '**john_doe** started playing **Interstellar (2014)**',
-            color: 0x9B59B6,
+            color: 0x2ECC71,
             thumbnail: true,
             fields: [
                 { name: 'User', value: 'john_doe', inline: true },
@@ -619,7 +619,7 @@ export default function (view) {
         playbackStop: {
             title: 'Playback Stopped',
             description: '**john_doe** stopped playing **Interstellar (2014)**',
-            color: 0x9B59B6,
+            color: 0x95A5A6,
             thumbnail: true,
             fields: [
                 { name: 'User', value: 'john_doe', inline: true },
@@ -690,7 +690,7 @@ export default function (view) {
         passwordChanged: {
             title: 'Password Changed',
             description: '**john_doe** has changed their password.',
-            color: 0xF1C40F,
+            color: 0xE67E22,
             thumbnail: false,
             fields: [
                 { name: 'Username', value: 'john_doe', inline: true }
@@ -709,7 +709,7 @@ export default function (view) {
         sessionStart: {
             title: 'Session Started',
             description: '**john_doe** started a new session.',
-            color: 0x3498DB,
+            color: 0x2ECC71,
             thumbnail: false,
             fields: [
                 { name: 'Device', value: 'iPhone 15', inline: true },
@@ -719,7 +719,7 @@ export default function (view) {
         sessionEnded: {
             title: 'Session Ended',
             description: '**john_doe** session has ended.',
-            color: 0x3498DB,
+            color: 0x95A5A6,
             thumbnail: false,
             fields: [
                 { name: 'Device', value: 'iPhone 15', inline: true },
@@ -765,7 +765,7 @@ export default function (view) {
         pluginInstalled: {
             title: 'Plugin Installed',
             description: '**Intro Skipper** has been installed.',
-            color: 0xAA5CC3,
+            color: 0x2ECC71,
             thumbnail: false,
             fields: [
                 { name: 'Plugin', value: 'Intro Skipper', inline: true },
@@ -775,7 +775,7 @@ export default function (view) {
         pluginUpdated: {
             title: 'Plugin Updated',
             description: '**Intro Skipper** has been updated.',
-            color: 0xAA5CC3,
+            color: 0x3498DB,
             thumbnail: false,
             fields: [
                 { name: 'Plugin', value: 'Intro Skipper', inline: true },
@@ -785,7 +785,7 @@ export default function (view) {
         pluginUninstalled: {
             title: 'Plugin Uninstalled',
             description: '**Intro Skipper** has been removed.',
-            color: 0xE74C3C,
+            color: 0xE67E22,
             thumbnail: false,
             fields: [
                 { name: 'Plugin', value: 'Intro Skipper', inline: true }
@@ -804,7 +804,7 @@ export default function (view) {
         pluginInstallCancelled: {
             title: 'Plugin Installation Cancelled',
             description: 'The installation of **Intro Skipper** was cancelled.',
-            color: 0xE67E22,
+            color: 0x95A5A6,
             thumbnail: false,
             fields: [
                 { name: 'Plugin', value: 'Intro Skipper', inline: true }
@@ -813,7 +813,7 @@ export default function (view) {
         pluginInstalling: {
             title: 'Plugin Installing',
             description: '**Intro Skipper** is being installed...',
-            color: 0xE67E22,
+            color: 0x3498DB,
             thumbnail: false,
             fields: [
                 { name: 'Plugin', value: 'Intro Skipper', inline: true },
