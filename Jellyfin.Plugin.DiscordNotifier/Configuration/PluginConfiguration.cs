@@ -78,6 +78,9 @@ namespace Jellyfin.Plugin.DiscordNotifier.Configuration
         /// <summary>Gets or sets the avatar URL override for the Discord webhook bot.</summary>
         public string WebhookAvatarUrl { get; set; } = string.Empty;
 
+        /// <summary>Gets or sets the icon URL shown in notification footers. Empty uses the Jellyfin logo.</summary>
+        public string FooterIconUrl { get; set; } = string.Empty;
+
         /// <summary>Gets or sets the Jellyfin server URL.</summary>
         public string ServerUrl { get; set; } = string.Empty;
 

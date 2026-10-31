@@ -165,6 +165,12 @@ public sealed class DiscordEmbedFooter
             ? "Jellyfin Discord Notifier"
             : $"{config.ServerName} • Jellyfin";
 
-        return new DiscordEmbedFooter { Text = text, IconUrl = JellyfinIconUrl };
+        var customIcon = config.FooterIconUrl?.Trim();
+        var iconUrl = Uri.TryCreate(customIcon, UriKind.Absolute, out var uri)
+            && (uri.Scheme == Uri.UriSchemeHttps || uri.Scheme == Uri.UriSchemeHttp)
+                ? customIcon
+                : JellyfinIconUrl;
+
+        return new DiscordEmbedFooter { Text = text, IconUrl = iconUrl };
     }
 }

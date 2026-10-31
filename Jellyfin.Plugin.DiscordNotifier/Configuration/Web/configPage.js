@@ -195,6 +195,7 @@ export default function (view) {
             document.querySelector('#serverName').value = config.ServerName || '';
             document.querySelector('#webhookUsername').value = config.WebhookUsername || '';
             document.querySelector('#webhookAvatarUrl').value = config.WebhookAvatarUrl || '';
+            document.querySelector('#footerIconUrl').value = config.FooterIconUrl || '';
 
             document.querySelector('#ItemAddedNotifier').checked = config.ItemAddedNotifier !== false;
             document.querySelector('#ItemAddedGroupingDelay').value = config.ItemAddedGroupingDelayMinutes || 5;
@@ -269,6 +270,7 @@ export default function (view) {
             config.ServerName = document.querySelector('#serverName').value.trim();
             config.WebhookUsername = document.querySelector('#webhookUsername').value.trim();
             config.WebhookAvatarUrl = document.querySelector('#webhookAvatarUrl').value.trim();
+            config.FooterIconUrl = document.querySelector('#footerIconUrl').value.trim();
 
             config.ItemAddedNotifier = document.querySelector('#ItemAddedNotifier').checked;
             config.ItemAddedGroupingDelayMinutes = parseInt(document.querySelector('#ItemAddedGroupingDelay').value, 10) || 5;
@@ -761,7 +763,9 @@ export default function (view) {
         }
 
         // Footer
-        document.getElementById('previewFooterIcon').src = footerIconUrl;
+        const footerIcon = document.getElementById('previewFooterIcon');
+        footerIcon.onerror = () => { footerIcon.onerror = null; footerIcon.src = footerIconUrl; };
+        footerIcon.src = document.querySelector('#footerIconUrl').value.trim() || footerIconUrl;
         var footerName = document.querySelector('#serverName').value.trim() || 'Jellyfin Discord Notifier';
         document.getElementById('previewFooterText').textContent = footerName + ' \u2022 Today at ' + hours + ':' + minutes;
 
@@ -785,4 +789,5 @@ export default function (view) {
     });
     document.getElementById('webhookAvatarUrl').addEventListener('input', function() { updateAvatarPreview(); renderPreview(); });
     document.getElementById('serverName').addEventListener('input', renderPreview);
+    document.getElementById('footerIconUrl').addEventListener('input', renderPreview);
 }
